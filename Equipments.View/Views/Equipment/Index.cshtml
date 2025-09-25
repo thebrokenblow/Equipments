@@ -1,0 +1,193 @@
+﻿@using Equipments.View.ViewModels
+@using Equipments.View.ViewModels.Equipment
+@model EquipmentIndexViewModel
+
+@{
+    ViewData["Title"] = "Оборудование";
+
+    var statusInactiveButton = "disabled";
+    var statusSelectedPage = "active";
+}
+
+<h1>Оборудование</h1>
+
+<!-- Форма поиска -->
+<form method="get" asp-action="Index" asp-controller="Equipment" class="row g-3 mb-4 align-items-end mt-2">
+    <div class="col-md-4">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <label for="cabinetNumber" class="col-form-label">Номер кабинета:</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" id="cabinetNumber" name="cabinetNumber"
+                       value="@Model.FilterViewModel.CabinetNumber">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <label for="serialNumber" class="col-form-label">Серийный номер:</label>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" id="serialNumber" name="serialNumber"
+                       value="@Model.FilterViewModel.SerialNumber">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary me-2">Найти</button>
+        <a asp-action="Index" asp-controller="Equipment" class="btn btn-outline-secondary">Сбросить</a>
+    </div>
+</form>
+
+@if (Model.Equipments.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Номер кабинета
+                </th>
+                <th>
+                    Тип оборудования
+                </th>
+                <th>
+                    Серийный номер
+                </th>
+                <th>
+                    Ответственное лицо
+                </th>
+                <th>
+                    Заключение о СП
+                </th>
+                <th>
+                    Заключение о СИ
+                </th>
+                <th>
+                    Примечание
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var equipment in Model.Equipments)
+            {
+                <tr>
+                    <td>
+                        @equipment.CabinetNumber
+                    </td>
+                    <td>
+                        @equipment.TypeEquipment
+                    </td>
+                    <td>
+                        @equipment.SerialNumber
+                    </td>
+                    <td>
+                        @equipment.FirstName @equipment.LastName @equipment.MiddleName
+                    </td>
+                    <td>
+                        @equipment.ConclusionSpecialProject
+                    </td>
+                    <td>
+                        @equipment.ConclusionSpecResearch
+                    </td>
+                    <td>
+                        @equipment.Note
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h2>По вашему запросу ничего не найдено</h2>
+}
+
+@if (Model.PageViewModel.TotalPages > 0)
+{
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(!Model.PageViewModel.HasPreviousPage ? statusInactiveButton : string.Empty)">
+                <a asp-action="Index" asp-controller="Equipment"
+                   asp-route-pageNumber="@(Model.PageViewModel.PageNumber - 1)"
+                   asp-route-cabinetNumber="@Model.FilterViewModel.CabinetNumber"
+                   asp-route-serialNumber="@Model.FilterViewModel.SerialNumber"
+                   class="page-link" aria-label="Предыдущая">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (int pageNumber = 1; pageNumber <= Model.PageViewModel.TotalPages; pageNumber++)
+            {
+                <li class="page-item @(Model.PageViewModel.PageNumber == pageNumber ? statusSelectedPage : string.Empty)" style="cursor: pointer">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-pageNumber="@pageNumber"
+                       asp-route-cabinetNumber="@Model.FilterViewModel.CabinetNumber"
+                       asp-route-serialNumber="@Model.FilterViewModel.SerialNumber"
+                       aria-label="@pageNumber">
+                        @pageNumber
+                    </a>
+                </li>
+            }
+            <li class="page-item @(!Model.PageViewModel.HasNextPage ? statusInactiveButton : string.Empty)">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(Model.PageViewModel.PageNumber + 1)"
+                   asp-route-cabinetNumber="@Model.FilterViewModel.CabinetNumber"
+                   asp-route-serialNumber="@Model.FilterViewModel.SerialNumber"
+                   aria-label="Следующая">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+
+
+<!-- Форма добавления нового оборудования -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Добавить новое оборудование</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="Create" asp-controller="Employee" class="row g-3">
+            <div class="col-md-3">
+                <label for="SerialNumber" class="form-label">Серийный номер *</label>
+                <input type="text" class="form-control" id="SerialNumber" name="SerialNumber" required>
+            </div>
+            <div class="col-md-3">
+                <label for="CabinetNumber" class="form-label">Номер кабинета *</label>
+                <input type="text" class="form-control" id="CabinetNumber" name="CabinetNumber" required>
+            </div>
+            <div class="col-md-3">
+                <label for="TypeEquipmentId" class="form-label">Тип оборудования *</label>
+              @*   <select class="form-select" id="TypeEquipmentId" name="TypeEquipmentId" required>
+                    <option value="(@Model.EmployeesSelectList)">Выберите тип</option>
+                    <!-- Здесь будут динамически подгружаться типы оборудования -->
+                </select> *@
+            </div>
+            <div class="col-md-3">
+                <label for="EmployeeId" class="form-label">Ответственное лицо *</label>
+                <select class="form-select" asp-items="@Model.EmployeesSelectList" id="EmployeeId" name="EmployeeId" required>
+                    <option value="">Выберите сотрудника</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="ConclusionSpecialProject" class="form-label">Заключение о СП</label>
+                <input type="text" class="form-control" id="ConclusionSpecialProject" name="ConclusionSpecialProject">
+            </div>
+            <div class="col-md-6">
+                <label for="ConclusionSpecResearch" class="form-label">Заключение о СИ</label>
+                <input type="text" class="form-control" id="ConclusionSpecResearch" name="ConclusionSpecResearch">
+            </div>
+            <div class="col-12">
+                <label for="Note" class="form-label">Примечание</label>
+                <textarea class="form-control" id="Note" name="Note" rows="2"></textarea>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Добавить оборудование</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Equipments.View.Models.Facility>
+
+@{
+    ViewData["Title"] = "Объекты";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Наименование
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) 
+    {
+        <tr>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Наименование</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

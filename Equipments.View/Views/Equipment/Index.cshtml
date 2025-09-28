@@ -1,6 +1,9 @@
-﻿@using Equipments.View.ViewModels
-@using Equipments.View.ViewModels.Equipment
-@model EquipmentIndexViewModel
+﻿@using Equipments.Application.Services.Equipments.Dto.Create
+@using Equipments.Application.Services.Facilities.Dto.Create
+@using Equipments.View.Vm
+@using Equipments.View.Vm.EquipmentsVm.Read
+
+@model EquipmentIndexVm
 
 @{
     ViewData["Title"] = "Оборудование";
@@ -15,6 +18,7 @@
 <form method="get" asp-action="Index" asp-controller="Equipment" class="row g-3 mb-4 align-items-end mt-2">
     <div class="col-md-4">
         <div class="row align-items-center">
+            <input type="hidden" value="@Model.FacilityId" class="form-control" id="FacilityId" name="FacilityId">
             <div class="col-auto">
                 <label for="cabinetNumber" class="col-form-label">Номер кабинета:</label>
             </div>
@@ -37,7 +41,6 @@
     </div>
     <div class="col-md-4">
         <button type="submit" class="btn btn-primary me-2">Найти</button>
-        <a asp-action="Index" asp-controller="Equipment" class="btn btn-outline-secondary">Сбросить</a>
     </div>
 </form>
 
@@ -67,6 +70,9 @@
                 <th>
                     Примечание
                 </th>
+                <th>
+                    Действия
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -93,6 +99,11 @@
                     </td>
                     <td>
                         @equipment.Note
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.FacilityId">Редактировать</a> |
+                        <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.FacilityId">Удалить</a>
+                        <a>Дублировать</a>
                     </td>
                 </tr>
             }
@@ -151,7 +162,8 @@ else
         <h5 class="mb-0">Добавить новое оборудование</h5>
     </div>
     <div class="card-body">
-        <form method="post" asp-action="Create" asp-controller="Employee" class="row g-3">
+        <form method="post" asp-action="Create" asp-controller="Equipment" class="row g-3">
+            <input type="hidden" value="@Model.FacilityId" class="form-control" id="FacilityId" name="FacilityId">
             <div class="col-md-3">
                 <label for="SerialNumber" class="form-label">Серийный номер *</label>
                 <input type="text" class="form-control" id="SerialNumber" name="SerialNumber" required>
@@ -162,14 +174,13 @@ else
             </div>
             <div class="col-md-3">
                 <label for="TypeEquipmentId" class="form-label">Тип оборудования *</label>
-              @*   <select class="form-select" id="TypeEquipmentId" name="TypeEquipmentId" required>
-                    <option value="(@Model.EmployeesSelectList)">Выберите тип</option>
-                    <!-- Здесь будут динамически подгружаться типы оборудования -->
-                </select> *@
+                <select class="form-select" name="TypeEquipmentId" asp-items="@Model.TypesEquipmentsSelectList" required>
+                    <option value="">Выберите тип</option>
+                </select>
             </div>
             <div class="col-md-3">
                 <label for="EmployeeId" class="form-label">Ответственное лицо *</label>
-                <select class="form-select" asp-items="@Model.EmployeesSelectList" id="EmployeeId" name="EmployeeId" required>
+                <select class="form-select" name="EmployeeId" asp-items="@Model.EmployeesSelectList" required>
                     <option value="">Выберите сотрудника</option>
                 </select>
             </div>
@@ -187,6 +198,25 @@ else
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-success">Добавить оборудование</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Форма нового типа оборудования -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Добавить новый тип оборудования</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="Create" asp-controller="TypeEquipment" class="row g-3">
+            <input type="hidden" value="@Model.FacilityId" class="form-control" id="facilityId" name="facilityId">
+            <div class="col-md-3">
+                <label class="form-label">Наименование *</label>
+                <input type="text" class="form-control" id="@nameof(FacilityCreateDtoInput.Name)" name="@nameof(FacilityCreateDtoInput.Name)" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Добавить тип оборудования</button>
             </div>
         </form>
     </div>

@@ -1,0 +1,51 @@
+﻿@using Equipments.Application.Services.Equipments.Dto.Create
+@using Equipments.Application.Services.Facilities.Dto.Create
+@using Equipments.Application.Services.Facilities.Dto.GetAll
+@using Equipments.Domain;
+
+@model List<FacilityGetAllDtoOutput>
+
+@{
+    ViewData["Title"] = "Объекты";
+}
+
+<h1>Объекты</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Наименование
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var facility in Model) 
+    {
+        <tr>
+            <td>
+                <a asp-controller="Equipment" asp-route-facilityId="@facility.Id">@facility.Name</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+
+<!-- Форма добавления нового объекта -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Добавить нового сотрудника</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="Create" asp-controller="Facilities" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Наименование объекта *</label>
+                <input type="text" class="form-control" id="@nameof(FacilityCreateDtoInput.Name)" name="@nameof(FacilityCreateDtoInput.Name)" required>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Добавить объект</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,7 +1,7 @@
-﻿@using Equipments.View.ViewModels
-@using Equipments.View.ViewModels.Employee
-@using Equipments.View.ViewModels.Equipment
-@model EmployeeIndexViewModel
+﻿@using Equipments.View.Vm
+@using Equipments.View.Vm.EmployeesVm.Read
+
+@model EmployeeIndexVm
 
 @{
     ViewData["Title"] = "Сотрудники";
@@ -11,3 +11,106 @@
 }
 
 <h1>Сотрудники</h1>
+
+@if (Model.Employees.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Фамилия
+                </th>
+                <th>
+                    Имя
+                </th>
+                <th>
+                    Отчество
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in Model.Employees)
+            {
+                <tr>
+                    <td>
+                        @employee.LastName
+                    </td>
+                    <td>
+                        @employee.FirstName
+                    </td>
+                    <td>
+                        @employee.MiddleName
+                    </td>
+                    <td>
+                        <a asp-controller="Employee" asp-action="Delete" asp-route-employeeId="@employee.Id">Удалить</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h2>По вашему запросу ничего не найдено</h2>
+}
+
+@if (Model.PageViewModel.TotalPages > 0)
+{
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(!Model.PageViewModel.HasPreviousPage ? statusInactiveButton : string.Empty)">
+                <a asp-action="Index" asp-controller="Equipment"
+                   asp-route-pageNumber="@(Model.PageViewModel.PageNumber - 1)"
+                   class="page-link" aria-label="Предыдущая">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (int pageNumber = 1; pageNumber <= Model.PageViewModel.TotalPages; pageNumber++)
+            {
+                <li class="page-item @(Model.PageViewModel.PageNumber == pageNumber ? statusSelectedPage : string.Empty)" style="cursor: pointer">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-pageNumber="@pageNumber"
+                       aria-label="@pageNumber">
+                        @pageNumber
+                    </a>
+                </li>
+            }
+            <li class="page-item @(!Model.PageViewModel.HasNextPage ? statusInactiveButton : string.Empty)">
+                <a class="page-link"
+                   asp-action="Index"
+                   asp-route-pageNumber="@(Model.PageViewModel.PageNumber + 1)"
+                   aria-label="Следующая">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+}
+
+
+<!-- Форма добавления нового сотрудника -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Добавить новый объект</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-action="Create" asp-controller="Employee" class="row g-3">
+            <div class="col-md-3">
+                <label for="LastName" class="form-label">Фамилия *</label>
+                <input type="text" class="form-control" id="LastName" name="LastName" required>
+            </div>
+            <div class="col-md-3">
+                <label for="CabinetNumber" class="form-label">Имя *</label>
+                <input type="text" class="form-control" id="FirstName" name="FirstName" required>
+            </div>
+            <div class="col-md-3">
+                <label for="CabinetNumber" class="form-label">Отчество </label>
+                <input type="text" class="form-control" id="MiddleName" name="MiddleName">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Добавить сотрудника</button>
+            </div>
+        </form>
+    </div>
+</div>

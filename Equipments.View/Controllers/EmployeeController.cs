@@ -1,42 +1,25 @@
-﻿using Equipments.View.Data;
-using Equipments.View.Models;
-using Equipments.View.ViewModels;
-using Equipments.View.ViewModels.Employee;
-using Equipments.View.ViewModels.Equipment;
+﻿using Equipments.Application.Exceptions;
+using Equipments.Application.Services.Employees;
+using Equipments.Application.Services.Employees.Dto.Create;
+using Equipments.View.Helper;
+using Equipments.View.Vm;
+using Equipments.View.Vm.EmployeesVm.Read;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace Equipments.View.Controllers;
 
-public class EmployeeController(EquipmentsDbContext context) : Controller
+public class EmployeeController(IEmployeeService employeeService) : Controller
 {
     private const int pageSize = 10;
 
     public async Task<IActionResult> Index(int pageNumber = 1)
     {
-        var querybleEmployees = context.Employees
-                                       .AsQueryable();
+        var (Employees, countEmployee) = await employeeService.GetPagedEmployeesAsync(pageNumber, pageSize);
+        var pageViewModel = new PageVm(countEmployee, pageNumber, pageSize);
 
-
-        var count = await querybleEmployees.CountAsync();
-        var employees = await querybleEmployees
-                                            .Skip((pageNumber - 1) * pageSize)
-                                            .Take(pageSize)
-                                            .Select(employee => new EmployeeViewModel
-                                            {
-                                                FirstName = employee.FirstName,
-                                                LastName = employee.LastName,
-                                                MiddleName = employee.MiddleName,
-                                            })
-                                            .AsNoTracking()
-                                            .ToListAsync();
-
-        var pageViewModel = new PageViewModel(count, pageNumber, pageSize);
-
-        var employeeIndexViewModel = new EmployeeIndexViewModel
+        var employeeIndexViewModel = new EmployeeIndexVm
         {
-            Employees = employees,
+            Employees = Employees,
             PageViewModel = pageViewModel,
         };
 
@@ -44,22 +27,28 @@ public class EmployeeController(EquipmentsDbContext context) : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(EquipmentCreateViewModel equipmentCreateViewModel)
+    public async Task<IActionResult> Create(EmployeeCreateDtoInput employeeCreateDtoInput)
     {
-        var equipment = new Equipment
+        await employeeService.AddAsync(employeeCreateDtoInput);
+
+        return RedirectToAction(
+                    nameof(Index),
+                    NameController.GetControllerName(nameof(EmployeeController)));
+    }
+
+    public async Task<IActionResult> Delete(int employeeId)
+    {
+        try
         {
-            SerialNumber = equipmentCreateViewModel.SerialNumber,
-            CabinetNumber = equipmentCreateViewModel.CabinetNumber,
-            TypeEquipmentId = equipmentCreateViewModel.TypeEquipmentId,
-            EmployeeId = equipmentCreateViewModel.EmployeeId,
-            ConclusionSpecialProject = equipmentCreateViewModel.ConclusionSpecialProject,
-            ConclusionSpecResearch = equipmentCreateViewModel.ConclusionSpecResearch,
-            Note = equipmentCreateViewModel.Note,
-        };
+            await employeeService.RemoveAsync(employeeId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
 
-        await context.Equipments.AddAsync(equipment);
-        await context.SaveChangesAsync();
-
-        return RedirectToAction("Index", "Equipment");
+        return RedirectToAction(
+                   nameof(Index),
+                   NameController.GetControllerName(nameof(EmployeeController)));
     }
 }

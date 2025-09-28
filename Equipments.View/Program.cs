@@ -1,16 +1,10 @@
-using Equipments.View.Data;
-using Equipments.View.Repositories;
-using Equipments.View.Repositories.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using Equipments.Application;
+using Equipments.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connection = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<EquipmentsDbContext>(options =>
-    options.UseNpgsql(connection));
-
-builder.Services.AddScoped<IEquipmentRepository, EquipmentRepository>();
+builder.Services.AddApplication();
+builder.Services.AddPersistence(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 
@@ -31,7 +25,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Equipment}/{action=Index}/{id?}")
+    pattern: "{controller=Facility}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 

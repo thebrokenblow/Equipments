@@ -1,88 +1,161 @@
-﻿using Equipments.View.Data;
-using Equipments.View.Models;
-using Equipments.View.ViewModels;
-using Equipments.View.ViewModels.Equipment;
+﻿using Equipments.Application.Exceptions;
+using Equipments.Application.Services.Equipments;
+using Equipments.Application.Services.Equipments.Dto.Create;
+using Equipments.Application.Services.Equipments.Dto.Edit;
+using Equipments.Application.Services.Equipments.Dto.Paged;
+using Equipments.Domain;
+using Equipments.View.Helper;
+using Equipments.View.Vm;
+using Equipments.View.Vm.EquipmentsVm.Create;
+using Equipments.View.Vm.EquipmentsVm.Edit;
+using Equipments.View.Vm.EquipmentsVm.Read;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Equipments.View.Controllers;
 
-public class EquipmentController(EquipmentsDbContext context) : Controller
+public class EquipmentController(IEquipmentService equipmentService) : Controller
 {
     private const int pageSize = 10;
 
-    public async Task<IActionResult> Index(int pageNumber = 1, string? cabinetNumber = null, string? serialNumber = null)
+    [HttpGet]
+    public async Task<IActionResult> Index(int facilityId, int pageNumber = 1, string? cabinetNumber = null, string? serialNumber = null)
     {
-        var querybleEquipments = context.Equipments
-                                .Include(equipment => equipment.Employee)
-                                .Include(equipment => equipment.TypeEquipment)
-                                .AsQueryable();
-
-        if (!string.IsNullOrEmpty(cabinetNumber))
+        var equipmentsPagedDtoInput = new EquipmentsPagedDtoInput
         {
-            querybleEquipments = querybleEquipments.Where(equipment => equipment.CabinetNumber.Contains(cabinetNumber.Trim()));
-        }
+            FacilityId = facilityId,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            CabinetNumber = cabinetNumber,
+            SerialNumber = serialNumber
+        };
 
-        if (!string.IsNullOrEmpty(serialNumber))
-        {
-            querybleEquipments = querybleEquipments.Where(e => e.SerialNumber.Contains(serialNumber.Trim()));
-        }
+        var equipmentPagedVM = await equipmentService.GetPagedEquipmentsAsync(equipmentsPagedDtoInput);
 
-        var count = await querybleEquipments.CountAsync();
-        var equipments = await querybleEquipments
-                                            .Skip((pageNumber - 1) * pageSize)
-                                            .Take(pageSize)
-                                            .Select(equipment => new EquipmentViewModel
-                                            {
-                                                Id = equipment.Id,
-                                                CabinetNumber = equipment.CabinetNumber,
-                                                SerialNumber = equipment.SerialNumber,
-                                                TypeEquipment = equipment.TypeEquipment.Name,
-                                                FirstName = equipment.Employee == null ? string.Empty : equipment.Employee.FirstName,
-                                                LastName = equipment.Employee == null ? string.Empty : equipment.Employee.LastName,
-                                                MiddleName = equipment.Employee == null ? string.Empty : equipment.Employee.MiddleName,
-                                                ConclusionSpecialProject = equipment.ConclusionSpecialProject,
-                                                ConclusionSpecResearch = equipment.ConclusionSpecResearch,
-                                                Note = equipment.Note,
-                                            })
-                                            .AsNoTracking()
-                                            .ToListAsync();
+        var employeesViewModel = equipmentPagedVM.EmployeesForCreateEquipment.Select(
+                                                    employees => new EmployeesCreateEquipmentVm
+                                                    {
+                                                        Id = employees.Id,
+                                                        FullName = $"{employees.LastName} {employees.FirstName} {employees.MiddleName}"
+                                                    });
 
-        var employees = await context.Employees.ToListAsync();
-        var employeesViewModel = employees.Select(x => new Test1 { Id = x.Id, Name = $"{x.FirstName} {x.LastName} {x.MiddleName}" });
+        var employeesSelectList = new SelectList(employeesViewModel,
+                                                 nameof(EmployeesCreateEquipmentVm.Id),
+                                                 nameof(EmployeesCreateEquipmentVm.FullName));
 
-        var employeesSelectList = new SelectList(employeesViewModel, nameof(Employee.Id), nameof(Test1.Name));
+        var typesEquipmentsSelectList = new SelectList(equipmentPagedVM.TypesEquipmentForCreateEquipmen,
+                                                       nameof(TypeEquipmentForCreateEquipmentDtoOutput.Id),
+                                                       nameof(TypeEquipmentForCreateEquipmentDtoOutput.Name));
 
-        var pageViewModel = new PageViewModel(count, pageNumber, pageSize);
+        var pageViewModel = new PageVm(equipmentPagedVM.CountEquipmentsWithFilter, pageNumber, pageSize);
 
-        var filterViewModel = new EquipmentFilterViewModel
+        var filterViewModel = new EquipmentFilterVm
         {
             CabinetNumber = cabinetNumber,
             SerialNumber = serialNumber
         };
 
-        var equipmentIndexViewModel = new EquipmentIndexViewModel
+        var equipmentIndexViewModel = new EquipmentIndexVm
         {
-            Equipments = equipments,
+            FacilityId = facilityId,
+            Equipments = equipmentPagedVM.Equipments,
             PageViewModel = pageViewModel,
             FilterViewModel = filterViewModel,
-            EmployeesSelectList = employeesSelectList
+            EmployeesSelectList = employeesSelectList,
+            TypesEquipmentsSelectList = typesEquipmentsSelectList
         };
 
         return View(equipmentIndexViewModel);
     }
 
-    public class Test1
+    [HttpPost]
+    public async Task<IActionResult> Create(EquipmentCreateDtoInput equipmentCreateDtoInput)
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction(
+                    nameof(Index),
+                    NameController.GetControllerName(nameof(EquipmentController)),
+                    new { facilityId = equipmentCreateDtoInput.FacilityId });
+        }
+
+        await equipmentService.AddAsync(equipmentCreateDtoInput);
+
+        return RedirectToAction(
+                nameof(Index), 
+                NameController.GetControllerName(nameof(EquipmentController)), 
+                new { facilityId = equipmentCreateDtoInput.FacilityId });
     }
 
-    public class Test2
+    public async Task<IActionResult> Delete(int equipmentId, int facilityId)
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        try
+        {
+            await equipmentService.RemoveByIdAsync(equipmentId);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(
+                nameof(Index),
+                NameController.GetControllerName(nameof(EquipmentController)),
+                new { facilityId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int equipmentId, int facilityId)
+    {
+        var equipmentEditVm = await equipmentService.GetEquipmentForEditAsync(equipmentId);
+
+        var employeesViewModel = equipmentEditVm.EmployeesForEditEquipment.Select(
+            employees => new EmployeesEditEquipmentVm
+            {
+                Id = employees.Id,
+                FullName = $"{employees.LastName} {employees.FirstName} {employees.MiddleName}"
+            });
+
+        var employeesSelectList = new SelectList(employeesViewModel,
+                                                 nameof(EmployeesEditEquipmentVm.Id),
+                                                 nameof(EmployeesEditEquipmentVm.FullName));
+
+        var typesEquipmentsSelectList = new SelectList(equipmentEditVm.TypesEquipmentsForEditEquipmen,
+                                                       nameof(TypeEquipment.Id),
+                                                       nameof(TypeEquipment.Name));
+
+        var facilitiesSelectList = new SelectList(equipmentEditVm.FacilitiesForEditEquipmen,
+                                                       nameof(Facility.Id),
+                                                       nameof(Facility.Name));
+
+
+        var equipmentEditViewModel = new EquipmentVisualEditVm
+        {
+            FacilityId = facilityId,
+            Equipment = equipmentEditVm.Equipment,
+            FacilitiesSelectList = facilitiesSelectList,
+            EmployeesSelectList = employeesSelectList,
+            TypesEquipmentsSelectList = typesEquipmentsSelectList
+        };
+
+        return View(equipmentEditViewModel);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(EquipmentEditDtoInput equipmentEditDtoInput)
+    {
+        try
+        {
+            await equipmentService.EditAsync(equipmentEditDtoInput);
+        }
+        catch(NotFoundException)
+        {
+            return NotFound();
+        }
+
+        return RedirectToAction(
+                nameof(Index),
+                NameController.GetControllerName(nameof(EquipmentController)),
+                new { equipmentEditDtoInput.FacilityId });
     }
 }

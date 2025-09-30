@@ -1,9 +1,7 @@
-﻿@using Equipments.Application.Services.Equipments.Dto.Create
-@using Equipments.Application.Services.Facilities.Dto.Create
-@using Equipments.View.Vm
-@using Equipments.View.Vm.EquipmentsVm.Read
+﻿@using Equipments.Domain.Entities
+@using Equipments.View.ViewModel
 
-@model EquipmentIndexVm
+@model EquipmentIndexViewModel
 
 @{
     ViewData["Title"] = "Оборудование";
@@ -18,13 +16,13 @@
 <form method="get" asp-action="Index" asp-controller="Equipment" class="row g-3 mb-4 align-items-end mt-2">
     <div class="col-md-4">
         <div class="row align-items-center">
-            <input type="hidden" value="@Model.FacilityId" class="form-control" id="FacilityId" name="FacilityId">
+            <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="facilityId" name="facilityId">
             <div class="col-auto">
                 <label for="cabinetNumber" class="col-form-label">Номер кабинета:</label>
             </div>
             <div class="col">
                 <input type="text" class="form-control" id="cabinetNumber" name="cabinetNumber"
-                       value="@Model.FilterViewModel.CabinetNumber">
+                       value="@Model.EquipmentFilterModel.CabinetNumber">
             </div>
         </div>
     </div>
@@ -35,7 +33,7 @@
             </div>
             <div class="col">
                 <input type="text" class="form-control" id="serialNumber" name="serialNumber"
-                       value="@Model.FilterViewModel.SerialNumber">
+                       value="@Model.EquipmentFilterModel.SerialNumber">
             </div>
         </div>
     </div>
@@ -44,7 +42,7 @@
     </div>
 </form>
 
-@if (Model.Equipments.Count > 0)
+@if (Model.PagedEquipments.Items.Count > 0)
 {
     <table class="table">
         <thead>
@@ -76,7 +74,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var equipment in Model.Equipments)
+            @foreach (var equipment in Model.PagedEquipments.Items)
             {
                 <tr>
                     <td>
@@ -101,8 +99,8 @@
                         @equipment.Note
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.FacilityId">Редактировать</a> |
-                        <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.FacilityId">Удалить</a>
+                        <a asp-action="Edit" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Редактировать</a> |
+                        <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Удалить</a>
                         <a>Дублировать</a>
                     </td>
                 </tr>
@@ -115,38 +113,41 @@ else
     <h2>По вашему запросу ничего не найдено</h2>
 }
 
-@if (Model.PageViewModel.TotalPages > 0)
+@if (Model.PagedEquipments.TotalPages > 0)
 {
     <nav>
         <ul class="pagination">
-            <li class="page-item @(!Model.PageViewModel.HasPreviousPage ? statusInactiveButton : string.Empty)">
+            <li class="page-item @(!Model.PagedEquipments.HasPreviousPage ? statusInactiveButton : string.Empty)">
                 <a asp-action="Index" asp-controller="Equipment"
-                   asp-route-pageNumber="@(Model.PageViewModel.PageNumber - 1)"
-                   asp-route-cabinetNumber="@Model.FilterViewModel.CabinetNumber"
-                   asp-route-serialNumber="@Model.FilterViewModel.SerialNumber"
+                   asp-route-pageNumber="@(Model.PagedEquipments.PageNumber - 1)"
+                   asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId"
+                   asp-route-cabinetNumber="@Model.EquipmentFilterModel.CabinetNumber"
+                   asp-route-serialNumber="@Model.EquipmentFilterModel.SerialNumber"
                    class="page-link" aria-label="Предыдущая">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
-            @for (int pageNumber = 1; pageNumber <= Model.PageViewModel.TotalPages; pageNumber++)
+            @for (int pageNumber = 1; pageNumber <= Model.PagedEquipments.TotalPages; pageNumber++)
             {
-                <li class="page-item @(Model.PageViewModel.PageNumber == pageNumber ? statusSelectedPage : string.Empty)" style="cursor: pointer">
+                <li class="page-item @(Model.PagedEquipments.PageNumber == pageNumber ? statusSelectedPage : string.Empty)" style="cursor: pointer">
                     <a class="page-link"
                        asp-action="Index"
                        asp-route-pageNumber="@pageNumber"
-                       asp-route-cabinetNumber="@Model.FilterViewModel.CabinetNumber"
-                       asp-route-serialNumber="@Model.FilterViewModel.SerialNumber"
+                       asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId"
+                       asp-route-cabinetNumber="@Model.EquipmentFilterModel.CabinetNumber"
+                       asp-route-serialNumber="@Model.EquipmentFilterModel.SerialNumber"
                        aria-label="@pageNumber">
                         @pageNumber
                     </a>
                 </li>
             }
-            <li class="page-item @(!Model.PageViewModel.HasNextPage ? statusInactiveButton : string.Empty)">
+            <li class="page-item @(!Model.PagedEquipments.HasNextPage ? statusInactiveButton : string.Empty)">
                 <a class="page-link"
                    asp-action="Index"
-                   asp-route-pageNumber="@(Model.PageViewModel.PageNumber + 1)"
-                   asp-route-cabinetNumber="@Model.FilterViewModel.CabinetNumber"
-                   asp-route-serialNumber="@Model.FilterViewModel.SerialNumber"
+                   asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId"
+                   asp-route-pageNumber="@(Model.PagedEquipments.PageNumber + 1)"
+                   asp-route-cabinetNumber="@Model.EquipmentFilterModel.CabinetNumber"
+                   asp-route-serialNumber="@Model.EquipmentFilterModel.SerialNumber"
                    aria-label="Следующая">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
@@ -163,7 +164,7 @@ else
     </div>
     <div class="card-body">
         <form method="post" asp-action="Create" asp-controller="Equipment" class="row g-3">
-            <input type="hidden" value="@Model.FacilityId" class="form-control" id="FacilityId" name="FacilityId">
+            <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="FacilityId" name="FacilityId">
             <div class="col-md-3">
                 <label for="SerialNumber" class="form-label">Серийный номер *</label>
                 <input type="text" class="form-control" id="SerialNumber" name="SerialNumber" required>
@@ -210,10 +211,10 @@ else
     </div>
     <div class="card-body">
         <form method="post" asp-action="Create" asp-controller="TypeEquipment" class="row g-3">
-            <input type="hidden" value="@Model.FacilityId" class="form-control" id="facilityId" name="facilityId">
+            <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="facilityId" name="facilityId">
             <div class="col-md-3">
                 <label class="form-label">Наименование *</label>
-                <input type="text" class="form-control" id="@nameof(FacilityCreateDtoInput.Name)" name="@nameof(FacilityCreateDtoInput.Name)" required>
+                <input type="text" class="form-control" id="@nameof(TypeEquipment.Name)" name="@nameof(TypeEquipment.Name)" required>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-success">Добавить тип оборудования</button>

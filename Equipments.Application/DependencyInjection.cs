@@ -1,7 +1,6 @@
-﻿using Equipments.Application.Services.Employees;
-using Equipments.Application.Services.Equipments;
-using Equipments.Application.Services.Facilities;
-using Equipments.Application.Services.TypesEquipments;
+﻿using Equipments.Application.Services;
+using Equipments.Application.Services.Interfaces;
+using Equipments.Domain.Interfaces.Queries;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Equipments.Application;
@@ -12,7 +11,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IEmployeeService, EmployeeService>();
         services.AddScoped<IEquipmentService, EquipmentService>();
-        services.AddScoped<IFacilitiesService, FacilitiesService>();
+        services.AddScoped<IFacilityService, FacilityService>();
         services.AddScoped<ITypeEquipmentService, TypeEquipmentService>();
 
         return services;

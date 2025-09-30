@@ -1,7 +1,7 @@
-﻿@using Equipments.Application.Services.Equipments.Dto.Edit
-@using Equipments.View.Vm.EquipmentsVm.Edit
+﻿@using Equipments.Domain.Entities
+@using Equipments.View.ViewModel
 
-@model EquipmentVisualEditVm
+@model EquipmentVisualEditViewModel
 
 @{
     ViewData["Title"] = "Редактирование";
@@ -18,48 +18,51 @@
     </div>
     <div class="card-body">
         <form method="post" asp-action="Edit" asp-controller="Equipment" class="row g-3">
-            <input 
-                type="hidden"
-                   name="@nameof(EquipmentEditDtoInput.EquipmentId)"
-                   id="@nameof(EquipmentEditDtoInput.EquipmentId)"
-                value="@Model.Equipment.Id" />
+            <input type="hidden"
+                   name="@nameof(Equipment.Id)"
+                   id="@nameof(Equipment.Id)"
+                   value="@Model.Equipment.Id" />
 
             <div class="col-md-4">
                 <label class="form-label">Серийный номер *</label>
-                <input type="text" 
-                       class="form-control" 
+                <input type="text"
+                       class="form-control"
                        value="@Model.Equipment.SerialNumber"
-                       name="@nameof(EquipmentEditDtoInput.SerialNumber)"
-                       id="@nameof(EquipmentEditDtoInput.SerialNumber)" required>
+                       name="@nameof(Equipment.SerialNumber)"
+                       id="@nameof(Equipment.SerialNumber)"
+                       required>
             </div>
 
             <div class="col-md-4">
                 <label class="form-label">Номер кабинета *</label>
-                <input type="text" 
+                <input type="text"
                        class="form-control"
                        value="@Model.Equipment.CabinetNumber"
-                       name="@nameof(EquipmentEditDtoInput.CabinetNumber)"
-                       id="@nameof(EquipmentEditDtoInput.CabinetNumber)" required>
+                       name="@nameof(Equipment.CabinetNumber)"
+                       id="@nameof(Equipment.CabinetNumber)"
+                       required>
             </div>
 
             <div class="col-md-4">
                 <label class="form-label">Объект *</label>
                 <select class="form-select"
-                        name="@nameof(EquipmentEditDtoInput.FacilityId)"
-                        id="@nameof(EquipmentEditDtoInput.FacilityId)"
+                        name="@nameof(Equipment.FacilityId)"
+                        id="@nameof(Equipment.FacilityId)"
                         asp-for="@Model.Equipment.FacilityId"
-                        asp-items="@Model.FacilitiesSelectList" required>
+                        asp-items="@Model.FacilitiesSelectList"
+                        required>
                     <option value="">Выберите объект</option>
                 </select>
             </div>
 
             <div class="col-md-6">
                 <label class="form-label">Тип оборудования *</label>
-                <select class="form-select" 
-                        name="@nameof(EquipmentEditDtoInput.TypeEquipmentId)"
-                        id="@nameof(EquipmentEditDtoInput.TypeEquipmentId)"
-                        asp-for="@Model.Equipment.TypeEquipmentId" 
-                        asp-items="@Model.TypesEquipmentsSelectList" required>
+                <select class="form-select"
+                        name="@nameof(Equipment.TypeEquipmentId)"
+                        id="@nameof(Equipment.TypeEquipmentId)"
+                        asp-for="@Model.Equipment.TypeEquipmentId"
+                        asp-items="@Model.TypesEquipmentsSelectList"
+                        required>
                     <option value="">Выберите тип</option>
                 </select>
             </div>
@@ -67,10 +70,11 @@
             <div class="col-md-6">
                 <label class="form-label">Ответственное лицо *</label>
                 <select class="form-select"
-                        name="@nameof(EquipmentEditDtoInput.EmployeeId)"
-                        id="@nameof(EquipmentEditDtoInput.EmployeeId)"
-                        asp-for="@Model.Equipment.EmployeeId" 
-                        asp-items="@Model.EmployeesSelectList" required>
+                        name="@nameof(Equipment.EmployeeId)"
+                        id="@nameof(Equipment.EmployeeId)"
+                        asp-for="@Model.Equipment.EmployeeId"
+                        asp-items="@Model.EmployeesSelectList"
+                        required>
                     <option value="">Выберите сотрудника</option>
                 </select>
                 <span asp-validation-for="@Model.Equipment.EmployeeId" class="text-danger"></span>
@@ -78,27 +82,27 @@
 
             <div class="col-md-6">
                 <label class="form-label">Заключение о СП</label>
-                <input name="@nameof(EquipmentEditDtoInput.ConclusionSpecialProject)"
-                       id="@nameof(EquipmentEditDtoInput.ConclusionSpecialProject)"
-                       type="text" 
-                       class="form-control" 
+                <input name="@nameof(Equipment.ConclusionSpecialProject)"
+                       id="@nameof(Equipment.ConclusionSpecialProject)"
+                       type="text"
+                       class="form-control"
                        asp-for="@Model.Equipment.ConclusionSpecialProject">
             </div>
 
             <div class="col-md-6">
                 <label class="form-label">Заключение о СИ</label>
-                <input name="@nameof(EquipmentEditDtoInput.ConclusionSpecResearch)"
-                       id="@nameof(EquipmentEditDtoInput.ConclusionSpecResearch)"
-                       type="text" 
-                       class="form-control" 
+                <input name="@nameof(Equipment.ConclusionSpecResearch)"
+                       id="@nameof(Equipment.ConclusionSpecResearch)"
+                       type="text"
+                       class="form-control"
                        asp-for="@Model.Equipment.ConclusionSpecResearch">
             </div>
 
             <div class="col-12">
                 <label class="form-label">Примечание</label>
-                <textarea name="@nameof(EquipmentEditDtoInput.Note)"
-                          id="@nameof(EquipmentEditDtoInput.Note)"
-                          class="form-control" 
+                <textarea name="@nameof(Equipment.Note)"
+                          id="@nameof(Equipment.Note)"
+                          class="form-control"
                           asp-for="@Model.Equipment.Note"
                           rows="3"
                           placeholder="Введите дополнительную информацию..."></textarea>
@@ -109,7 +113,10 @@
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-check-lg"></i> Сохранить изменения
                     </button>
-                    <a asp-controller="Equipment" asp-action="Index" asp-route-facilityId="@Model.FacilityId" class="btn btn-secondary">
+                    <a asp-controller="Equipment"
+                       asp-action="Index"
+                       asp-route-facilityId="@Model.FacilityId"
+                       class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Назад к списку
                     </a>
                 </div>

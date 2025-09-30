@@ -1,5 +1,7 @@
-﻿using Equipments.Application;
-using Equipments.Application.DatabaseInterfaces;
+﻿using Equipments.Domain.Interfaces.Queries;
+using Equipments.Domain.Interfaces.Repositories;
+using Equipments.Persistence.Data;
+using Equipments.Persistence.Queries;
 using Equipments.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +26,8 @@ public static class DependencyInjection
         services.AddScoped<IFacilityRepository, FacilityRepository>();
         services.AddScoped<ITypeEquipmentRepository, TypeEquipmentRepository>();
 
-        services.AddApplication();
+        services.AddScoped<IEmployeeQueries, EmployeeQuery>();
+        services.AddScoped<IEquipmentQueries, EquipmentQuery>();
 
         return services;
     }

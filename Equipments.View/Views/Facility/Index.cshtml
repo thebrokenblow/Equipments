@@ -1,9 +1,7 @@
-﻿@using Equipments.Application.Services.Equipments.Dto.Create
-@using Equipments.Application.Services.Facilities.Dto.Create
-@using Equipments.Application.Services.Facilities.Dto.GetAll
-@using Equipments.Domain;
+﻿@using Equipments.Domain;
+@using Equipments.Domain.Entities
 
-@model List<FacilityGetAllDtoOutput>
+@model List<Facility>
 
 @{
     ViewData["Title"] = "Объекты";
@@ -38,10 +36,10 @@
         <h5 class="mb-0">Добавить нового сотрудника</h5>
     </div>
     <div class="card-body">
-        <form method="post" asp-action="Create" asp-controller="Facilities" class="row g-3">
+        <form method="post" asp-controller="Facility" asp-action="Create" class="row g-3">
             <div class="col-md-3">
                 <label class="form-label">Наименование объекта *</label>
-                <input type="text" class="form-control" id="@nameof(FacilityCreateDtoInput.Name)" name="@nameof(FacilityCreateDtoInput.Name)" required>
+                <input type="text" class="form-control" id="Name" name="Name" required>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-success">Добавить объект</button>

@@ -1,35 +1,26 @@
 ﻿using Equipments.Application.Exceptions;
-using Equipments.Application.Services.Employees;
-using Equipments.Application.Services.Employees.Dto.Create;
+using Equipments.Application.Services.Interfaces;
+using Equipments.Domain.Entities;
 using Equipments.View.Helper;
-using Equipments.View.Vm;
-using Equipments.View.Vm.EmployeesVm.Read;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Equipments.View.Controllers;
 
 public class EmployeeController(IEmployeeService employeeService) : Controller
 {
-    private const int pageSize = 10;
+    private const int pageSize = 20;
 
     public async Task<IActionResult> Index(int pageNumber = 1)
     {
-        var (Employees, countEmployee) = await employeeService.GetPagedEmployeesAsync(pageNumber, pageSize);
-        var pageViewModel = new PageVm(countEmployee, pageNumber, pageSize);
+        var pagedEmployees = await employeeService.GetPagedAsync(pageNumber, pageSize);
 
-        var employeeIndexViewModel = new EmployeeIndexVm
-        {
-            Employees = Employees,
-            PageViewModel = pageViewModel,
-        };
-
-        return View(employeeIndexViewModel);
+        return View(pagedEmployees);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(EmployeeCreateDtoInput employeeCreateDtoInput)
+    public async Task<IActionResult> Create(Employee employee)
     {
-        await employeeService.AddAsync(employeeCreateDtoInput);
+        await employeeService.AddAsync(employee);
 
         return RedirectToAction(
                     nameof(Index),
@@ -40,7 +31,7 @@ public class EmployeeController(IEmployeeService employeeService) : Controller
     {
         try
         {
-            await employeeService.RemoveAsync(employeeId);
+            await employeeService.RemoveByIdAsync(employeeId);
         }
         catch (NotFoundException)
         {

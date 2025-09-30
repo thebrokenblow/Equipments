@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="EntityTypeConfigurations\" />
+    <Folder Include="Data\EntityTypeConfigurations\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Equipments.Application\Equipments.Application.csproj" />
     <ProjectReference Include="..\Equipments.Domain\Equipments.Domain.csproj" />
   </ItemGroup>
 

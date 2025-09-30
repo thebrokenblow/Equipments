@@ -1,5 +1,5 @@
-﻿using Equipments.Application.Services.TypesEquipments;
-using Equipments.Application.Services.TypesEquipments.Dto.Create;
+﻿using Equipments.Application.Services.Interfaces;
+using Equipments.Domain.Entities;
 using Equipments.View.Helper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +8,9 @@ namespace Equipments.View.Controllers;
 public class TypeEquipmentController(ITypeEquipmentService typeEquipmentService) : Controller
 {
     [HttpPost]
-    public async Task<IActionResult> Create(int facilityId, TypeEquipmentDtoInput typeEquipmentDtoInput)
+    public async Task<IActionResult> Create(int facilityId, TypeEquipment typeEquipment)
     {
-        await typeEquipmentService.AddAsync(typeEquipmentDtoInput);
+        await typeEquipmentService.AddAsync(typeEquipment);
 
         return RedirectToAction(
                     nameof(EquipmentController.Index),

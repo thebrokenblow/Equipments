@@ -1,90 +1,82 @@
 ﻿using Equipments.Application.Exceptions;
-using Equipments.Application.Services.Equipments;
-using Equipments.Application.Services.Equipments.Dto.Create;
-using Equipments.Application.Services.Equipments.Dto.Edit;
-using Equipments.Application.Services.Equipments.Dto.Paged;
-using Equipments.Domain;
+using Equipments.Application.Services.Interfaces;
+using Equipments.Domain.Entities;
+using Equipments.Domain.QueryModels.Employees;
+using Equipments.Domain.QueryModels.Equipments;
 using Equipments.View.Helper;
-using Equipments.View.Vm;
-using Equipments.View.Vm.EquipmentsVm.Create;
-using Equipments.View.Vm.EquipmentsVm.Edit;
-using Equipments.View.Vm.EquipmentsVm.Read;
+using Equipments.View.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Equipments.View.Controllers;
 
-public class EquipmentController(IEquipmentService equipmentService) : Controller
+public class EquipmentController(
+    IEquipmentService equipmentService, 
+    IEmployeeService employeeService, 
+    ITypeEquipmentService typeEquipmentService,
+    IFacilityService facilityService) : Controller
 {
-    private const int pageSize = 10;
+    private const int pageSize = 20;
 
     [HttpGet]
-    public async Task<IActionResult> Index(int facilityId, int pageNumber = 1, string? cabinetNumber = null, string? serialNumber = null)
+    public async Task<IActionResult> Index(
+        int facilityId,
+        int pageNumber = 1,
+        string? cabinetNumber = null,
+        string? serialNumber = null)
     {
-        var equipmentsPagedDtoInput = new EquipmentsPagedDtoInput
+        var equipmentFilterModel = new EquipmentFilterModel
         {
             FacilityId = facilityId,
-            PageNumber = pageNumber,
-            PageSize = pageSize,
             CabinetNumber = cabinetNumber,
             SerialNumber = serialNumber
         };
 
-        var equipmentPagedVM = await equipmentService.GetPagedEquipmentsAsync(equipmentsPagedDtoInput);
+        var pagedEquipments = await equipmentService.GetFilteredPagedAsync(
+                                                                pageNumber,
+                                                                pageSize,
+                                                                equipmentFilterModel);
 
-        var employeesViewModel = equipmentPagedVM.EmployeesForCreateEquipment.Select(
-                                                    employees => new EmployeesCreateEquipmentVm
-                                                    {
-                                                        Id = employees.Id,
-                                                        FullName = $"{employees.LastName} {employees.FirstName} {employees.MiddleName}"
-                                                    });
+        var employeesForSelect = await employeeService.GetForSelectAsync();
+        var typesEquipmentsForSelect = await typeEquipmentService.GetAllAsync();
 
-        var employeesSelectList = new SelectList(employeesViewModel,
-                                                 nameof(EmployeesCreateEquipmentVm.Id),
-                                                 nameof(EmployeesCreateEquipmentVm.FullName));
 
-        var typesEquipmentsSelectList = new SelectList(equipmentPagedVM.TypesEquipmentForCreateEquipmen,
-                                                       nameof(TypeEquipmentForCreateEquipmentDtoOutput.Id),
-                                                       nameof(TypeEquipmentForCreateEquipmentDtoOutput.Name));
+        var employeesSelectList = new SelectList(employeesForSelect,
+                                                 nameof(EmployeeModel.Id),
+                                                 nameof(EmployeeModel.FullName));
 
-        var pageViewModel = new PageVm(equipmentPagedVM.CountEquipmentsWithFilter, pageNumber, pageSize);
+        var typesEquipmentsSelectList = new SelectList(typesEquipmentsForSelect,
+                                                       nameof(TypeEquipment.Id),
+                                                       nameof(TypeEquipment.Name));
 
-        var filterViewModel = new EquipmentFilterVm
+        var equipmentIndexViewModel = new EquipmentIndexViewModel
         {
-            CabinetNumber = cabinetNumber,
-            SerialNumber = serialNumber
-        };
-
-        var equipmentIndexViewModel = new EquipmentIndexVm
-        {
-            FacilityId = facilityId,
-            Equipments = equipmentPagedVM.Equipments,
-            PageViewModel = pageViewModel,
-            FilterViewModel = filterViewModel,
+            PagedEquipments = pagedEquipments,
+            EquipmentFilterModel = equipmentFilterModel,
             EmployeesSelectList = employeesSelectList,
-            TypesEquipmentsSelectList = typesEquipmentsSelectList
+            TypesEquipmentsSelectList = typesEquipmentsSelectList,
         };
 
         return View(equipmentIndexViewModel);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(EquipmentCreateDtoInput equipmentCreateDtoInput)
+    public async Task<IActionResult> Create(int facilityId, Equipment equipment)
     {
         if (!ModelState.IsValid)
         {
             return RedirectToAction(
                     nameof(Index),
                     NameController.GetControllerName(nameof(EquipmentController)),
-                    new { facilityId = equipmentCreateDtoInput.FacilityId });
+                    new { facilityId });
         }
 
-        await equipmentService.AddAsync(equipmentCreateDtoInput);
+        await equipmentService.AddAsync(equipment);
 
         return RedirectToAction(
-                nameof(Index), 
-                NameController.GetControllerName(nameof(EquipmentController)), 
-                new { facilityId = equipmentCreateDtoInput.FacilityId });
+                nameof(Index),
+                NameController.GetControllerName(nameof(EquipmentController)),
+                new { facilityId });
     }
 
     public async Task<IActionResult> Delete(int equipmentId, int facilityId)
@@ -107,48 +99,51 @@ public class EquipmentController(IEquipmentService equipmentService) : Controlle
     [HttpGet]
     public async Task<IActionResult> Edit(int equipmentId, int facilityId)
     {
-        var equipmentEditVm = await equipmentService.GetEquipmentForEditAsync(equipmentId);
-
-        var employeesViewModel = equipmentEditVm.EmployeesForEditEquipment.Select(
-            employees => new EmployeesEditEquipmentVm
-            {
-                Id = employees.Id,
-                FullName = $"{employees.LastName} {employees.FirstName} {employees.MiddleName}"
-            });
-
-        var employeesSelectList = new SelectList(employeesViewModel,
-                                                 nameof(EmployeesEditEquipmentVm.Id),
-                                                 nameof(EmployeesEditEquipmentVm.FullName));
-
-        var typesEquipmentsSelectList = new SelectList(equipmentEditVm.TypesEquipmentsForEditEquipmen,
-                                                       nameof(TypeEquipment.Id),
-                                                       nameof(TypeEquipment.Name));
-
-        var facilitiesSelectList = new SelectList(equipmentEditVm.FacilitiesForEditEquipmen,
-                                                       nameof(Facility.Id),
-                                                       nameof(Facility.Name));
-
-
-        var equipmentEditViewModel = new EquipmentVisualEditVm
+        try
         {
-            FacilityId = facilityId,
-            Equipment = equipmentEditVm.Equipment,
-            FacilitiesSelectList = facilitiesSelectList,
-            EmployeesSelectList = employeesSelectList,
-            TypesEquipmentsSelectList = typesEquipmentsSelectList
-        };
+            var equipment = await equipmentService.GetByIdAsync(equipmentId);
 
-        return View(equipmentEditViewModel);
+            var employeesForSelect = await employeeService.GetForSelectAsync();
+            var typesEquipmentsForSelect = await typeEquipmentService.GetAllAsync();
+            var facilitiesForSelect = await facilityService.GetAllAsync();
+
+            var employeesSelectList = new SelectList(employeesForSelect,
+                                                     nameof(EmployeeModel.Id),
+                                                     nameof(EmployeeModel.FullName));
+
+            var typesEquipmentsSelectList = new SelectList(typesEquipmentsForSelect,
+                                                           nameof(TypeEquipment.Id),
+                                                           nameof(TypeEquipment.Name));
+
+            var facilitiesSelectList = new SelectList(facilitiesForSelect,
+                                                      nameof(Facility.Id),
+                                                      nameof(Facility.Name));
+
+            var equipmentEditViewModel = new EquipmentVisualEditViewModel
+            {
+                FacilityId = facilityId,
+                Equipment = equipment,
+                FacilitiesSelectList = facilitiesSelectList,
+                EmployeesSelectList = employeesSelectList,
+                TypesEquipmentsSelectList = typesEquipmentsSelectList
+            };
+
+            return View(equipmentEditViewModel);
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpPost]
-    public async Task<IActionResult> Edit(EquipmentEditDtoInput equipmentEditDtoInput)
+    public async Task<IActionResult> Edit(int facilityId, Equipment equipment)
     {
         try
         {
-            await equipmentService.EditAsync(equipmentEditDtoInput);
+            await equipmentService.UpdateAsync(equipment);
         }
-        catch(NotFoundException)
+        catch (NotFoundException)
         {
             return NotFound();
         }
@@ -156,6 +151,6 @@ public class EquipmentController(IEquipmentService equipmentService) : Controlle
         return RedirectToAction(
                 nameof(Index),
                 NameController.GetControllerName(nameof(EquipmentController)),
-                new { equipmentEditDtoInput.FacilityId });
+                new { facilityId });
     }
 }

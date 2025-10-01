@@ -1,4 +1,5 @@
-﻿using Equipments.Application.Services.Interfaces;
+﻿using Equipments.Application.Exceptions;
+using Equipments.Application.Services.Interfaces;
 using Equipments.Domain.Entities;
 using Equipments.Domain.Interfaces.Repositories;
 
@@ -18,5 +19,24 @@ public class FacilityService(IFacilityRepository facilityRepository) : IFacility
         var facilities = await facilityRepository.GetAllAsync();
 
         return facilities;
+    }
+
+    public async Task<Facility> GetByIdAsync(int facilityId)
+    {
+        var facility = await facilityRepository.GetByIdAsync(facilityId) ?? 
+                                throw new NotFoundException(nameof(Equipment), facilityId);
+
+        return facility;
+    }
+
+    public async Task RemoveByIdAsync(int facilityId)
+    {
+        var facility = await GetByIdAsync(facilityId);
+        await facilityRepository.RemoveAsync(facility);
+    }
+
+    public async Task UpdateAsync(Facility facility)
+    {
+        await facilityRepository.UpdateAsync(facility);
     }
 }

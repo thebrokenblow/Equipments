@@ -18,14 +18,18 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var facility in Model) 
-    {
-        <tr>
-            <td>
-                <a asp-controller="Equipment" asp-route-facilityId="@facility.Id">@facility.Name</a>
-            </td>
-        </tr>
-    }
+        @foreach (var facility in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-controller="Equipment" asp-route-facilityId="@facility.Id">@facility.Name</a>
+                </td>
+                <td>
+                    <a asp-controller="Facility" asp-action="Edit" asp-route-facilityId="@facility.Id">Редактировать</a> |
+                    <a asp-controller="Facility" asp-action="Delete" asp-route-facilityId="@facility.Id">Удалить</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
@@ -33,7 +37,7 @@
 <!-- Форма добавления нового объекта -->
 <div class="card mb-4">
     <div class="card-header">
-        <h5 class="mb-0">Добавить нового сотрудника</h5>
+        <h5 class="mb-0">Добавить нового объекта</h5>
     </div>
     <div class="card-body">
         <form method="post" asp-controller="Facility" asp-action="Create" class="row g-3">

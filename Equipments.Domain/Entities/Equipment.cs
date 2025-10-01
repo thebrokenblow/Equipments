@@ -33,7 +33,7 @@ public class Equipment
     /// <summary>
     /// Идентификатор сотрудника, за которым закреплено оборудование (внешний ключ)
     /// </summary>
-    public required int EmployeeId { get; set; }
+    public int? EmployeeId { get; set; }
 
     /// <summary>
     /// Навигационное свойство для сотрудника

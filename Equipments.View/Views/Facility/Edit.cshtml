@@ -1,0 +1,24 @@
+﻿@using Equipments.Domain.Entities
+@model Facility
+
+<!-- Форма редактирования объекта -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Редактирование объекта</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" asp-controller="Facility" asp-action="Edit" class="row g-3">
+            <input type="hidden" class="form-control" value="@Model.Id" id="Id" name="Id">
+            <div class="col-md-3">
+                <label class="form-label">Наименование объекта *</label>
+                <input type="text" class="form-control" value="@Model.Name" id="Name" name="Name" required>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-success">Редактировать объект</button>
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Назад к списку
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

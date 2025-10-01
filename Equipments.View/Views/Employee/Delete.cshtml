@@ -1,0 +1,58 @@
+﻿@using Equipments.Domain.Entities;
+@model Employee
+
+@{
+    ViewData["Title"] = "Удаление сотрудника";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Удаление сотрудника
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5>Информация о сотруднике:</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th class="w-25">ФИО:</th>
+                                            <td>@Model.LastName @Model.FirstName @Model.MiddleName</td>
+                                            <td>
+                                                <small class="text-muted d-block mt-1">
+                                                    При удалении сотрудника оборудование останется в системе, но будет откреплено от этого сотрудника.
+                                                </small>
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="DeleteConfirmed" method="post">
+                        <input type="hidden" asp-for="@Model.Id" name="employeeId" />
+                        <div class="d-flex gap-2">
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Удалить сотрудника
+                            </button>
+                            <a asp-controller="Employee"
+                               asp-action="Index"
+                               class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Назад к списку
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -100,8 +100,8 @@
                     </td>
                     <td>
                         <a asp-action="Edit" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Редактировать</a> |
-                        <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Удалить</a>
-                        <a>Дублировать</a>
+                        <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Удалить</a> |
+                        <a asp-controller="Equipment" asp-action="Duplicate" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Дублировать</a>
                     </td>
                 </tr>
             }
@@ -180,9 +180,9 @@ else
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="EmployeeId" class="form-label">Ответственное лицо *</label>
-                <select class="form-select" name="EmployeeId" asp-items="@Model.EmployeesSelectList" required>
-                    <option value="">Выберите сотрудника</option>
+                <label for="EmployeeId" class="form-label">Ответственное лицо</label>
+                <select class="form-select" name="EmployeeId" asp-items="@Model.EmployeesSelectList">
+                    <option value="null">Пока нет сотрудника</option>
                 </select>
             </div>
             <div class="col-md-6">

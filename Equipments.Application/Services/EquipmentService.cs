@@ -42,7 +42,7 @@ public class EquipmentService(
         await equipmentRepository.UpdateAsync(equipment);
     }
 
-    public async Task<PagedResult<EquipmentListModel>> GetFilteredPagedAsync(
+    public async Task<PagedResult<EquipmentDetailsListModel>> GetFilteredPagedAsync(
         int pageNumber,
         int pageSize,
         EquipmentFilterModel equipmentFilterModel)
@@ -51,10 +51,9 @@ public class EquipmentService(
         equipmentFilterModel.CabinetNumber = equipmentFilterModel.CabinetNumber?.Trim();
 
         int countSkip = (pageNumber - 1) * pageSize;
-
         var equipmentsFilteredPage = await equipmentQueries.GetFilteredRangeAsync(countSkip, pageSize, equipmentFilterModel);
 
-        var pagedEquipments = new PagedResult<EquipmentListModel>(
+        var pagedEquipments = new PagedResult<EquipmentDetailsListModel>(
             equipmentsFilteredPage.Equipments, 
             equipmentsFilteredPage.CountEquipmentsWithFilter, 
             pageNumber, 
@@ -69,5 +68,33 @@ public class EquipmentService(
                                 throw new NotFoundException(nameof(Equipment), id);
 
         return equipment;
+    }
+
+    public async Task<EquipmentDetailsModel> GetDetailsByIdAsync(int id)
+    {
+        var equipment = await equipmentQueries.GetDetailsByIdAsync(id) ??
+                                throw new NotFoundException(nameof(Equipment), id);
+
+        return equipment;
+    }
+
+    public async Task DuplicateAsync(int equipmentId)
+    {
+        var equipment = await equipmentRepository.GetByIdAsync(equipmentId) ??
+                                throw new NotFoundException(nameof(Equipment), equipmentId);
+
+        var duplicateEquipment = new Equipment
+        {
+            SerialNumber = equipment.SerialNumber,
+            CabinetNumber = equipment.CabinetNumber,
+            TypeEquipmentId = equipment.TypeEquipmentId,
+            EmployeeId = equipment.EmployeeId,
+            ConclusionSpecialProject = equipment.ConclusionSpecialProject,
+            ConclusionSpecResearch = equipment.ConclusionSpecResearch,
+            Note = equipment.Note,
+            FacilityId = equipment.FacilityId,
+        };
+
+        await equipmentRepository.AddAsync(duplicateEquipment);
     }
 }

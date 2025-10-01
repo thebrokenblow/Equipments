@@ -42,6 +42,7 @@
                         @employee.MiddleName
                     </td>
                     <td>
+                        <a asp-controller="Employee" asp-action="Edit" asp-route-employeeId="@employee.Id">Редактировать</a> |
                         <a asp-controller="Employee" asp-action="Delete" asp-route-employeeId="@employee.Id">Удалить</a>
                     </td>
                 </tr>

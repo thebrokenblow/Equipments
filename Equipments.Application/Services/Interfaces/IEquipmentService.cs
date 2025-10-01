@@ -10,8 +10,10 @@ public interface IEquipmentService
     Task RemoveByIdAsync(int id);
     Task UpdateAsync(Equipment equipment);
     Task<Equipment> GetByIdAsync(int id);
-    Task<PagedResult<EquipmentListModel>> GetFilteredPagedAsync(
+    Task<EquipmentDetailsModel> GetDetailsByIdAsync(int id);
+    Task<PagedResult<EquipmentDetailsListModel>> GetFilteredPagedAsync(
         int pageNumber,
         int pageSize,
         EquipmentFilterModel equipmentFilterModel);
+    Task DuplicateAsync(int equipmentId);
 }

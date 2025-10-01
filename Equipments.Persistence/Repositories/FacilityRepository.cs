@@ -19,4 +19,23 @@ public class FacilityRepository(EquipmentsDbContext context) : IFacilityReposito
         await context.AddAsync(facility);
         await context.SaveChangesAsync();
     }
+
+    public async Task<Facility?> GetByIdAsync(int id)
+    {
+        var facility = await context.Facilities.FirstOrDefaultAsync(facility => facility.Id == id);
+
+        return facility;
+    }
+
+    public async Task UpdateAsync(Facility facility)
+    {
+        context.Update(facility);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task RemoveAsync(Facility facility)
+    {
+        context.Remove(facility);
+        await context.SaveChangesAsync();
+    }
 }

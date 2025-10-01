@@ -1,5 +1,6 @@
 ﻿using Equipments.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace Equipments.Persistence.Data;
 
@@ -31,4 +32,10 @@ public class EquipmentsDbContext(DbContextOptions<EquipmentsDbContext> options) 
     /// Набор данных объектов предприятия
     /// </summary>
     public DbSet<Facility> Facilities { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        base.OnModelCreating(modelBuilder);
+    }
 }

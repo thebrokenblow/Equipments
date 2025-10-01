@@ -1,0 +1,51 @@
+﻿@using Equipments.Domain.Entities
+@model Facility
+
+@{
+    ViewData["Title"] = "Удаление объекта";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Удаление объекта
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5>Информация об объекте:</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th class="w-25">Наименование:</th>
+                                            <td>@Model.Name</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="DeleteConfirmed" method="post">
+                        <input type="hidden" value="@Model.Id" name="facilityId" />
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" 
+                                    class="btn btn-danger" >
+                                <i class="bi bi-trash"></i> Удалить объект
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Назад к списку
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

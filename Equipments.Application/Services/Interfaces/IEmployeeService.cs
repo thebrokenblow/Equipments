@@ -10,4 +10,6 @@ public interface IEmployeeService
     Task RemoveByIdAsync(int id);
     Task<List<EmployeeModel>> GetForSelectAsync();
     Task<PagedResult<EmployeeModel>> GetPagedAsync(int pageNumber, int pageSize);
+    Task<Employee> GetByIdAsync(int id);
+    Task UpdateAsync(Employee employee);
 }

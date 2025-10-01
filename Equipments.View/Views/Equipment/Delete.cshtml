@@ -1,0 +1,100 @@
+﻿@using Equipments.Domain.QueryModels.Equipments
+@model EquipmentDetailsModel
+
+@{
+    ViewData["Title"] = "Удаление оборудования";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Удаление оборудования
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5>Информация об оборудовании:</h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th class="w-25">Серийный номер:</th>
+                                            <td>@Model.SerialNumber</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Номер кабинета:</th>
+                                            <td>@Model.CabinetNumber</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Тип оборудования:</th>
+                                            <td>@Model.TypeEquipment</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Ответственный:</th>
+                                            <td>
+                                                @if (Model.LastName != null)
+                                                {
+                                                    @($"{Model.LastName} {Model.FirstName} {Model.MiddleName}")
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Не назначен</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Объект:</th>
+                                            <td>@Model.FacilityName</td>
+                                        </tr>
+                                        @if (!string.IsNullOrEmpty(Model.ConclusionSpecialProject))
+                                        {
+                                            <tr>
+                                                <th>Заключение о СП:</th>
+                                                <td>@Model.ConclusionSpecialProject</td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.ConclusionSpecResearch))
+                                        {
+                                            <tr>
+                                                <th>Заключение о СИ:</th>
+                                                <td>@Model.ConclusionSpecResearch</td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Note))
+                                        {
+                                            <tr>
+                                                <th>Примечание:</th>
+                                                <td>@Model.Note</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="DeleteConfirmed" method="post">
+                        <input type="hidden" asp-for="Id" name="equipmentId" />
+                        <div class="col-12">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-lg"></i> Сохранить изменения
+                                </button>
+                                <a asp-controller="Equipment"
+                                   asp-action="Index"
+                                   asp-route-facilityId="@Model.FacilityId"
+                                   class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Назад к списку
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -14,7 +14,7 @@ public class EmployeeService(
 {
     public async Task AddAsync(Employee employee)
     {
-        employee.FirstName = employee.LastName.Trim();
+        employee.FirstName = employee.FirstName.Trim();
         employee.LastName = employee.LastName.Trim();
         employee.MiddleName = employee.MiddleName?.Trim();
 
@@ -44,5 +44,18 @@ public class EmployeeService(
         var pagedEmployee = new PagedResult<EmployeeModel>(employees, countEmployee, pageNumber, pageSize);
 
         return pagedEmployee;
+    }
+
+    public async Task<Employee> GetByIdAsync(int id)
+    {
+        var employee = await employeeRepository.GetByIdAsync(id) ??
+                            throw new NotFoundException(nameof(Employee), id);
+
+        return employee;
+    }
+
+    public async Task UpdateAsync(Employee employee)
+    {
+        await employeeRepository.UpdateAsync(employee);
     }
 }

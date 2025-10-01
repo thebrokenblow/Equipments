@@ -25,4 +25,10 @@ public class EmployeeRepository(EquipmentsDbContext context) : IEmployeeReposito
         context.Remove(employee);
         await context.SaveChangesAsync();
     }
+
+    public async Task UpdateAsync(Employee employee)
+    {
+        context.Update(employee);
+        await context.SaveChangesAsync();
+    }
 }

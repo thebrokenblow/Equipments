@@ -68,14 +68,14 @@
             </div>
 
             <div class="col-md-6">
-                <label class="form-label">Ответственное лицо *</label>
+                <label class="form-label">Ответственное лицо</label>
                 <select class="form-select"
                         name="@nameof(Equipment.EmployeeId)"
                         id="@nameof(Equipment.EmployeeId)"
                         asp-for="@Model.Equipment.EmployeeId"
                         asp-items="@Model.EmployeesSelectList"
                         required>
-                    <option value="">Выберите сотрудника</option>
+                    <option value="null">Пока нет сотрудника</option>
                 </select>
                 <span asp-validation-for="@Model.Equipment.EmployeeId" class="text-danger"></span>
             </div>

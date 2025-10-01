@@ -16,7 +16,7 @@ public class EquipmentController(
     ITypeEquipmentService typeEquipmentService,
     IFacilityService facilityService) : Controller
 {
-    private const int pageSize = 20;
+    private const int pageSize = 15;
 
     [HttpGet]
     public async Task<IActionResult> Index(
@@ -79,21 +79,35 @@ public class EquipmentController(
                 new { facilityId });
     }
 
+    [HttpGet]
     public async Task<IActionResult> Delete(int equipmentId, int facilityId)
     {
         try
         {
-            await equipmentService.RemoveByIdAsync(equipmentId);
+            var equipment = await equipmentService.GetDetailsByIdAsync(equipmentId);
+            return View(equipment);
         }
         catch (NotFoundException)
         {
             return NotFound();
         }
+    }
 
-        return RedirectToAction(
-                nameof(Index),
-                NameController.GetControllerName(nameof(EquipmentController)),
-                new { facilityId });
+    [HttpPost]
+    public async Task<IActionResult> DeleteConfirmed(int equipmentId)
+    {
+        try
+        {
+            await equipmentService.RemoveByIdAsync(equipmentId);
+
+            return RedirectToAction(
+                    nameof(Index),
+                    NameController.GetControllerName(nameof(EmployeeController)));
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
     }
 
     [HttpGet]
@@ -152,5 +166,22 @@ public class EquipmentController(
                 nameof(Index),
                 NameController.GetControllerName(nameof(EquipmentController)),
                 new { facilityId });
+    }
+
+    public async Task<IActionResult> Duplicate(int facilityId, int equipmentId)
+    {
+        try
+        {
+            await equipmentService.DuplicateAsync(equipmentId);
+
+            return RedirectToAction(
+                        nameof(Index),
+                        NameController.GetControllerName(nameof(EquipmentController)),
+                        new { facilityId });
+        }
+        catch (NotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

@@ -18,13 +18,13 @@
         <thead>
             <tr>
                 <th>
-                    Фамилия
+                    Фамилия и инициалы
                 </th>
                 <th>
-                    Имя
+                    Наименование подразделения
                 </th>
                 <th>
-                    Отчество
+                    Примечание
                 </th>
             </tr>
         </thead>
@@ -33,18 +33,21 @@
             {
                 <tr>
                     <td>
-                        @employee.LastName
+                        @employee.SurnameAndInitials
                     </td>
                     <td>
-                        @employee.FirstName
+                        @employee.SubdivisionName
                     </td>
                     <td>
-                        @employee.MiddleName
+                        @employee.Note
                     </td>
-                    <td>
-                        <a asp-controller="Employee" asp-action="Edit" asp-route-employeeId="@employee.Id">Редактировать</a> |
-                        <a asp-controller="Employee" asp-action="Delete" asp-route-employeeId="@employee.Id">Удалить</a>
-                    </td>
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        <td>
+                            <a asp-controller="Employee" asp-action="Edit" asp-route-employeeId="@employee.Id">Редактировать</a> |
+                            <a asp-controller="Employee" asp-action="Delete" asp-route-employeeId="@employee.Id">Удалить</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
@@ -89,29 +92,31 @@ else
     </nav>
 }
 
-
-<!-- Форма добавления нового сотрудника -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">Добавить новый объект</h5>
+@if (User.Identity!.IsAuthenticated)
+{
+    <!-- Форма добавления нового сотрудника -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Добавить нового сотрудника</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="Create" asp-controller="Employee" class="row g-3">
+                <div class="col-md-3">
+                    <label for="LastName" class="form-label">Фамилия и инициалы *</label>
+                    <input type="text" class="form-control" id="SurnameAndInitials" name="SurnameAndInitials" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="CabinetNumber" class="form-label">Подразделение</label>
+                    <input type="text" class="form-control" id="SubdivisionName" name="SubdivisionName">
+                </div>
+                <div class="col-md-3">
+                    <label for="CabinetNumber" class="form-label">Примечание</label>
+                    <input type="text" class="form-control" id="Note" name="Note">
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">Добавить сотрудника</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="card-body">
-        <form method="post" asp-action="Create" asp-controller="Employee" class="row g-3">
-            <div class="col-md-3">
-                <label for="LastName" class="form-label">Фамилия *</label>
-                <input type="text" class="form-control" id="LastName" name="LastName" required>
-            </div>
-            <div class="col-md-3">
-                <label for="CabinetNumber" class="form-label">Имя *</label>
-                <input type="text" class="form-control" id="FirstName" name="FirstName" required>
-            </div>
-            <div class="col-md-3">
-                <label for="CabinetNumber" class="form-label">Отчество </label>
-                <input type="text" class="form-control" id="MiddleName" name="MiddleName">
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-success">Добавить сотрудника</button>
-            </div>
-        </form>
-    </div>
-</div>
+}

@@ -8,19 +8,17 @@ public class EmployeeModel
     public int Id { get; set; }
 
     /// <summary>
-    /// Фамилия сотрудника
+    /// Фамилия и инициалы
     /// </summary>
-    public required string LastName { get; set; }
+    public required string SurnameAndInitials { get; set; }
 
     /// <summary>
-    /// Имя сотрудника
+    /// Наименование подразделения 
     /// </summary>
-    public required string FirstName { get; set; }
+    public required string? SubdivisionName { get; set; }
 
     /// <summary>
-    /// Отчество сотрудника (необязательное поле)
+    /// Примечание
     /// </summary>
-    public string? MiddleName { get; set; }
-
-    public string FullName => $"{LastName} {FirstName} {MiddleName}";
+    public string? Note { get; set; }
 }

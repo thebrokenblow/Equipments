@@ -36,9 +36,9 @@
                                         <tr>
                                             <th>Ответственный:</th>
                                             <td>
-                                                @if (Model.LastName != null)
+                                                @if (Model.SurnameAndInitials != null)
                                                 {
-                                                    @($"{Model.LastName} {Model.FirstName} {Model.MiddleName}")
+                                                    @($"{Model.SurnameAndInitials}")
                                                 }
                                                 else
                                                 {
@@ -81,8 +81,8 @@
                         <input type="hidden" asp-for="Id" name="equipmentId" />
                         <div class="col-12">
                             <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="bi bi-check-lg"></i> Сохранить изменения
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-check-lg"></i> Удалить
                                 </button>
                                 <a asp-controller="Equipment"
                                    asp-action="Index"

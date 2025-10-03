@@ -13,9 +13,9 @@ public class EmployeeQuery(EquipmentsDbContext context) : IEmployeeQueries
                                 .Select(employee => new EmployeeModel
                                 {
                                     Id = employee.Id,
-                                    FirstName = employee.FirstName,
-                                    LastName = employee.LastName,
-                                    MiddleName = employee.MiddleName
+                                    SurnameAndInitials = employee.SurnameAndInitials,
+                                    SubdivisionName = employee.SubdivisionName,
+                                    Note = employee.Note
                                 })
                                 .AsNoTracking()
                                 .ToListAsync();
@@ -31,9 +31,9 @@ public class EmployeeQuery(EquipmentsDbContext context) : IEmployeeQueries
                                         .Select(employee => new EmployeeModel
                                         {
                                             Id = employee.Id,
-                                            FirstName = employee.FirstName,
-                                            LastName = employee.LastName,
-                                            MiddleName = employee.MiddleName,
+                                            SurnameAndInitials = employee.SurnameAndInitials,
+                                            SubdivisionName = employee.SubdivisionName,
+                                            Note = employee.Note
                                         })
                                         .AsNoTracking()
                                         .ToListAsync();

@@ -27,6 +27,34 @@
                             <a class="nav-link text-dark" asp-controller="Employee" asp-action="Index">Сотрудники</a>
                         </li>
                     </ul>
+                    <ul class="navbar-nav">
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    👤 Вы вошли в систему
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <form method="post" asp-controller="Account" asp-action="Logout" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="dropdown-item text-danger">
+                                                <i class="bi bi-box-arrow-right"></i> Выйти
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">
+                                    <i class="bi bi-box-arrow-in-right"></i> Вход в систему
+                                </a>
+                            </li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
@@ -39,7 +67,15 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - Equipments.View - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Equipments.View -
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span>Вы авторизованы в системе</span>
+            }
+            else
+            {
+                <span>Для работы в системе требуется авторизация</span>
+            }
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

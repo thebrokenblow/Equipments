@@ -19,18 +19,18 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
             .HasColumnName("id");
 
         builder
-            .Property(employee => employee.LastName)
-            .HasColumnName("last_name")
+            .Property(employee => employee.SurnameAndInitials)
+            .HasColumnName("surname_and_initials")
             .IsRequired();
 
         builder
-            .Property(employee => employee.FirstName)
-            .HasColumnName("first_name")
-            .IsRequired();
+            .Property(employee => employee.SubdivisionName)
+            .HasColumnName("subdivision_name")
+            .IsRequired(false);
 
         builder
-            .Property(employee => employee.MiddleName)
-            .HasColumnName("middle_name")
+            .Property(employee => employee.Note)
+            .HasColumnName("note")
             .IsRequired(false);
 
         builder

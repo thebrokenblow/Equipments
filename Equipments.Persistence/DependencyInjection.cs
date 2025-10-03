@@ -19,8 +19,9 @@ public static class DependencyInjection
             throw new InvalidOperationException("Connection string is not initialized");
 
         services.AddDbContext<EquipmentsDbContext>(options => 
-                                                        options.UseSqlServer(connectionString));
+                                                        options.UseNpgsql(connectionString));
 
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IEquipmentRepository, EquipmentRepository>();
         services.AddScoped<IFacilityRepository, FacilityRepository>();

@@ -1,5 +1,6 @@
 ﻿using Equipments.Application.Services.Interfaces;
 using Equipments.Domain.Entities;
+using Equipments.View.Filters;
 using Equipments.View.Helper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace Equipments.View.Controllers;
 
 public class FacilityController(IFacilityService facilityService) : Controller
 {
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         var facilities = await facilityService.GetAllAsync();
@@ -15,6 +17,7 @@ public class FacilityController(IFacilityService facilityService) : Controller
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> Create(Facility facility)
     {
         await facilityService.AddAsync(facility);
@@ -25,6 +28,7 @@ public class FacilityController(IFacilityService facilityService) : Controller
     }
 
     [HttpGet]
+    [AuthenticationRequired]
     public async Task<IActionResult> Edit(int facilityId)
     {
         var facility = await facilityService.GetByIdAsync(facilityId);
@@ -33,6 +37,7 @@ public class FacilityController(IFacilityService facilityService) : Controller
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> Edit(Facility facility)
     {
         await facilityService.UpdateAsync(facility);
@@ -43,6 +48,7 @@ public class FacilityController(IFacilityService facilityService) : Controller
     }
 
     [HttpGet]
+    [AuthenticationRequired]
     public async Task<IActionResult> Delete(int facilityId)
     {
         var facility = await facilityService.GetByIdAsync(facilityId);
@@ -51,6 +57,7 @@ public class FacilityController(IFacilityService facilityService) : Controller
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> DeleteConfirmed(int facilityId)
     {
         await facilityService.RemoveByIdAsync(facilityId);

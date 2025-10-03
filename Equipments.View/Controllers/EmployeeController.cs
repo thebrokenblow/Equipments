@@ -1,5 +1,6 @@
 ﻿using Equipments.Application.Services.Interfaces;
 using Equipments.Domain.Entities;
+using Equipments.View.Filters;
 using Equipments.View.Helper;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ public class EmployeeController(IEmployeeService employeeService) : Controller
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> Create(Employee employee)
     {
         await employeeService.AddAsync(employee);
@@ -28,6 +30,7 @@ public class EmployeeController(IEmployeeService employeeService) : Controller
     }
 
     [HttpGet]
+    [AuthenticationRequired]
     public async Task<IActionResult> Delete(int employeeId)
     {
         var employee = await employeeService.GetByIdAsync(employeeId);
@@ -35,6 +38,7 @@ public class EmployeeController(IEmployeeService employeeService) : Controller
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> DeleteConfirmed(int employeeId)
     {
         await employeeService.RemoveByIdAsync(employeeId);
@@ -45,6 +49,7 @@ public class EmployeeController(IEmployeeService employeeService) : Controller
     }
 
     [HttpGet]
+    [AuthenticationRequired]
     public async Task<IActionResult> Edit(int employeeId)
     {
         var employee = await employeeService.GetByIdAsync(employeeId);
@@ -52,6 +57,7 @@ public class EmployeeController(IEmployeeService employeeService) : Controller
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> Edit(Employee employee)
     {
         await employeeService.UpdateAsync(employee);

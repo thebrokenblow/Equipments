@@ -14,9 +14,9 @@ public class EmployeeService(
 {
     public async Task AddAsync(Employee employee)
     {
-        employee.FirstName = employee.FirstName.Trim();
-        employee.LastName = employee.LastName.Trim();
-        employee.MiddleName = employee.MiddleName?.Trim();
+        employee.SurnameAndInitials = employee.SurnameAndInitials.Trim();
+        employee.SubdivisionName = employee.SubdivisionName?.Trim();
+        employee.Note = employee.Note?.Trim();
 
         await employeeRepository.AddAsync(employee);
     }

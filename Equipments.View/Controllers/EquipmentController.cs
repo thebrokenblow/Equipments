@@ -3,6 +3,7 @@ using Equipments.Application.Services.Interfaces;
 using Equipments.Domain.Entities;
 using Equipments.Domain.QueryModels.Employees;
 using Equipments.Domain.QueryModels.Equipments;
+using Equipments.View.Filters;
 using Equipments.View.Helper;
 using Equipments.View.ViewModel;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,7 @@ public class EquipmentController(
 
         var employeesSelectList = new SelectList(employeesForSelect,
                                                  nameof(EmployeeModel.Id),
-                                                 nameof(EmployeeModel.FullName));
+                                                 nameof(EmployeeModel.SurnameAndInitials));
 
         var typesEquipmentsSelectList = new SelectList(typesEquipmentsForSelect,
                                                        nameof(TypeEquipment.Id),
@@ -61,6 +62,7 @@ public class EquipmentController(
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> Create(int facilityId, Equipment equipment)
     {
         if (!ModelState.IsValid)
@@ -80,6 +82,7 @@ public class EquipmentController(
     }
 
     [HttpGet]
+    [AuthenticationRequired]
     public async Task<IActionResult> Delete(int equipmentId, int facilityId)
     {
         try
@@ -94,6 +97,7 @@ public class EquipmentController(
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> DeleteConfirmed(int equipmentId)
     {
         try
@@ -111,6 +115,7 @@ public class EquipmentController(
     }
 
     [HttpGet]
+    [AuthenticationRequired]
     public async Task<IActionResult> Edit(int equipmentId, int facilityId)
     {
         try
@@ -123,7 +128,7 @@ public class EquipmentController(
 
             var employeesSelectList = new SelectList(employeesForSelect,
                                                      nameof(EmployeeModel.Id),
-                                                     nameof(EmployeeModel.FullName));
+                                                     nameof(EmployeeModel.SurnameAndInitials));
 
             var typesEquipmentsSelectList = new SelectList(typesEquipmentsForSelect,
                                                            nameof(TypeEquipment.Id),
@@ -151,6 +156,7 @@ public class EquipmentController(
     }
 
     [HttpPost]
+    [AuthenticationRequired]
     public async Task<IActionResult> Edit(int facilityId, Equipment equipment)
     {
         try
@@ -168,6 +174,7 @@ public class EquipmentController(
                 new { facilityId });
     }
 
+    [AuthenticationRequired]
     public async Task<IActionResult> Duplicate(int facilityId, int equipmentId)
     {
         try

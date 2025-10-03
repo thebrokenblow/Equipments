@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Equipments.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -14,11 +15,11 @@ namespace Equipments.Persistence.Migrations
                 name: "employees",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    last_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    first_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    middle_name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    surname_and_initials = table.Column<string>(type: "text", nullable: false),
+                    subdivision_name = table.Column<string>(type: "text", nullable: true),
+                    note = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -29,9 +30,9 @@ namespace Equipments.Persistence.Migrations
                 name: "facilities",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,9 +43,9 @@ namespace Equipments.Persistence.Migrations
                 name: "type_equipments",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,19 +53,32 @@ namespace Equipments.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    password = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "equipments",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    serial_number = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    cabinet_number = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    type_equipment_id = table.Column<int>(type: "int", nullable: false),
-                    employee_id = table.Column<int>(type: "int", nullable: true),
-                    conclusion_special_project = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    conclusion_spec_research = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    note = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    facility_id = table.Column<int>(type: "int", nullable: false)
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    serial_number = table.Column<string>(type: "text", nullable: false),
+                    cabinet_number = table.Column<string>(type: "text", nullable: false),
+                    type_equipment_id = table.Column<int>(type: "integer", nullable: false),
+                    employee_id = table.Column<int>(type: "integer", nullable: true),
+                    conclusion_special_project = table.Column<string>(type: "text", nullable: true),
+                    conclusion_spec_research = table.Column<string>(type: "text", nullable: true),
+                    note = table.Column<string>(type: "text", nullable: true),
+                    facility_id = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -80,7 +94,7 @@ namespace Equipments.Persistence.Migrations
                         column: x => x.facility_id,
                         principalTable: "facilities",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_equipments_type_equipments_type_equipment_id",
                         column: x => x.type_equipment_id,
@@ -116,6 +130,9 @@ namespace Equipments.Persistence.Migrations
         {
             migrationBuilder.DropTable(
                 name: "equipments");
+
+            migrationBuilder.DropTable(
+                name: "users");
 
             migrationBuilder.DropTable(
                 name: "employees");

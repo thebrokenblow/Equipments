@@ -79,6 +79,6 @@ public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
             .HasOne(equipment => equipment.Facility)
             .WithMany(facility => facility.Equipment)
             .HasForeignKey(equipment => equipment.FacilityId)
-            .OnDelete(DeleteBehavior.Restrict);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

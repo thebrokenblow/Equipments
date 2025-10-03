@@ -87,7 +87,7 @@
                         @equipment.SerialNumber
                     </td>
                     <td>
-                        @equipment.FirstName @equipment.LastName @equipment.MiddleName
+                        @equipment.SurnameAndInitials
                     </td>
                     <td>
                         @equipment.ConclusionSpecialProject
@@ -98,11 +98,14 @@
                     <td>
                         @equipment.Note
                     </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Редактировать</a> |
-                        <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Удалить</a> |
-                        <a asp-controller="Equipment" asp-action="Duplicate" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Дублировать</a>
-                    </td>
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        <td>
+                            <a asp-action="Edit" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Редактировать</a> |
+                            <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Удалить</a> |
+                            <a asp-controller="Equipment" asp-action="Duplicate" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Дублировать</a>
+                        </td>
+                    }
                 </tr>
             }
         </tbody>
@@ -156,69 +159,71 @@ else
     </nav>
 }
 
+@if (User.Identity!.IsAuthenticated)
+{
+    <!-- Форма добавления нового оборудования -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Добавить новое оборудование</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="Create" asp-controller="Equipment" class="row g-3">
+                <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="FacilityId" name="FacilityId">
+                <div class="col-md-3">
+                    <label for="SerialNumber" class="form-label">Серийный номер *</label>
+                    <input type="text" class="form-control" id="SerialNumber" name="SerialNumber" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="CabinetNumber" class="form-label">Номер кабинета *</label>
+                    <input type="text" class="form-control" id="CabinetNumber" name="CabinetNumber" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="TypeEquipmentId" class="form-label">Тип оборудования *</label>
+                    <select class="form-select" name="TypeEquipmentId" asp-items="@Model.TypesEquipmentsSelectList" required>
+                        <option value="">Выберите тип</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="EmployeeId" class="form-label">Ответственное лицо</label>
+                    <select class="form-select" name="EmployeeId" asp-items="@Model.EmployeesSelectList">
+                        <option value="null">Пока нет сотрудника</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="ConclusionSpecialProject" class="form-label">Заключение о СП</label>
+                    <input type="text" class="form-control" id="ConclusionSpecialProject" name="ConclusionSpecialProject">
+                </div>
+                <div class="col-md-6">
+                    <label for="ConclusionSpecResearch" class="form-label">Заключение о СИ</label>
+                    <input type="text" class="form-control" id="ConclusionSpecResearch" name="ConclusionSpecResearch">
+                </div>
+                <div class="col-12">
+                    <label for="Note" class="form-label">Примечание</label>
+                    <textarea class="form-control" id="Note" name="Note" rows="2"></textarea>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">Добавить оборудование</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-<!-- Форма добавления нового оборудования -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">Добавить новое оборудование</h5>
+    <!-- Форма нового типа оборудования -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Добавить новый тип оборудования</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-action="Create" asp-controller="TypeEquipment" class="row g-3">
+                <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="facilityId" name="facilityId">
+                <div class="col-md-3">
+                    <label class="form-label">Наименование *</label>
+                    <input type="text" class="form-control" id="@nameof(TypeEquipment.Name)" name="@nameof(TypeEquipment.Name)" required>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">Добавить тип оборудования</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="card-body">
-        <form method="post" asp-action="Create" asp-controller="Equipment" class="row g-3">
-            <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="FacilityId" name="FacilityId">
-            <div class="col-md-3">
-                <label for="SerialNumber" class="form-label">Серийный номер *</label>
-                <input type="text" class="form-control" id="SerialNumber" name="SerialNumber" required>
-            </div>
-            <div class="col-md-3">
-                <label for="CabinetNumber" class="form-label">Номер кабинета *</label>
-                <input type="text" class="form-control" id="CabinetNumber" name="CabinetNumber" required>
-            </div>
-            <div class="col-md-3">
-                <label for="TypeEquipmentId" class="form-label">Тип оборудования *</label>
-                <select class="form-select" name="TypeEquipmentId" asp-items="@Model.TypesEquipmentsSelectList" required>
-                    <option value="">Выберите тип</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label for="EmployeeId" class="form-label">Ответственное лицо</label>
-                <select class="form-select" name="EmployeeId" asp-items="@Model.EmployeesSelectList">
-                    <option value="null">Пока нет сотрудника</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="ConclusionSpecialProject" class="form-label">Заключение о СП</label>
-                <input type="text" class="form-control" id="ConclusionSpecialProject" name="ConclusionSpecialProject">
-            </div>
-            <div class="col-md-6">
-                <label for="ConclusionSpecResearch" class="form-label">Заключение о СИ</label>
-                <input type="text" class="form-control" id="ConclusionSpecResearch" name="ConclusionSpecResearch">
-            </div>
-            <div class="col-12">
-                <label for="Note" class="form-label">Примечание</label>
-                <textarea class="form-control" id="Note" name="Note" rows="2"></textarea>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-success">Добавить оборудование</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Форма нового типа оборудования -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">Добавить новый тип оборудования</h5>
-    </div>
-    <div class="card-body">
-        <form method="post" asp-action="Create" asp-controller="TypeEquipment" class="row g-3">
-            <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="facilityId" name="facilityId">
-            <div class="col-md-3">
-                <label class="form-label">Наименование *</label>
-                <input type="text" class="form-control" id="@nameof(TypeEquipment.Name)" name="@nameof(TypeEquipment.Name)" required>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-success">Добавить тип оборудования</button>
-            </div>
-        </form>
-    </div>
-</div>
+}

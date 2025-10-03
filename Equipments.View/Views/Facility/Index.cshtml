@@ -24,30 +24,37 @@
                 <td>
                     <a asp-controller="Equipment" asp-route-facilityId="@facility.Id">@facility.Name</a>
                 </td>
-                <td>
-                    <a asp-controller="Facility" asp-action="Edit" asp-route-facilityId="@facility.Id">Редактировать</a> |
-                    <a asp-controller="Facility" asp-action="Delete" asp-route-facilityId="@facility.Id">Удалить</a>
-                </td>
+
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <td>
+                        <a asp-controller="Facility" asp-action="Edit" asp-route-facilityId="@facility.Id">Редактировать</a> |
+                        <a asp-controller="Facility" asp-action="Delete" asp-route-facilityId="@facility.Id">Удалить</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>
 </table>
 
 
-<!-- Форма добавления нового объекта -->
-<div class="card mb-4">
-    <div class="card-header">
-        <h5 class="mb-0">Добавить нового объекта</h5>
+@if (User.Identity!.IsAuthenticated)
+{
+    <!-- Форма добавления нового объекта -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Добавить нового объекта</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" asp-controller="Facility" asp-action="Create" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Наименование объекта *</label>
+                    <input type="text" class="form-control" id="Name" name="Name" required>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">Добавить объект</button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="card-body">
-        <form method="post" asp-controller="Facility" asp-action="Create" class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">Наименование объекта *</label>
-                <input type="text" class="form-control" id="Name" name="Name" required>
-            </div>
-            <div class="col-12">
-                <button type="submit" class="btn btn-success">Добавить объект</button>
-            </div>
-        </form>
-    </div>
-</div>
+}

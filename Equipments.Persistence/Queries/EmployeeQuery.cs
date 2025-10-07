@@ -1,4 +1,5 @@
-﻿using Equipments.Domain.Interfaces.Queries;
+﻿using Equipments.Domain.Entities;
+using Equipments.Domain.Interfaces.Queries;
 using Equipments.Domain.QueryModels.Employees;
 using Equipments.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ public class EmployeeQuery(EquipmentsDbContext context) : IEmployeeQueries
                                     SubdivisionName = employee.SubdivisionName,
                                     Note = employee.Note
                                 })
+                                .OrderBy(employee => employee.SurnameAndInitials)
                                 .AsNoTracking()
                                 .ToListAsync();
     }
@@ -26,6 +28,8 @@ public class EmployeeQuery(EquipmentsDbContext context) : IEmployeeQueries
         var count = await context.Employees.CountAsync();
 
         var employees = await context.Employees
+                                        .OrderBy(employee => employee.SubdivisionName)
+                                        .ThenBy(employee => employee.SurnameAndInitials)
                                         .Skip(countSkip)
                                         .Take(countTake)
                                         .Select(employee => new EmployeeModel

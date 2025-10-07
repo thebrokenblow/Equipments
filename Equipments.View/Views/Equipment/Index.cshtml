@@ -8,17 +8,21 @@
 
     var statusInactiveButton = "disabled";
     var statusSelectedPage = "active";
+
+    var pageSizeOptions = new[] { 10, 25, 50, 100 };
+    var currentPageSize = Model.PagedEquipments.PageSize;
 }
 
 <h1>Оборудование</h1>
 
 <!-- Форма поиска -->
 <form method="get" asp-action="Index" asp-controller="Equipment" class="row g-3 mb-4 align-items-end mt-2">
-    <div class="col-md-4">
+    <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="facilityId" name="facilityId">
+
+    <div class="col-md-3">
         <div class="row align-items-center">
-            <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="facilityId" name="facilityId">
             <div class="col-auto">
-                <label for="cabinetNumber" class="col-form-label">Номер кабинета:</label>
+                <label for="cabinetNumber" class="col-form-label">№ АС:</label>
             </div>
             <div class="col">
                 <input type="text" class="form-control" id="cabinetNumber" name="cabinetNumber"
@@ -26,7 +30,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+
+    <div class="col-md-3">
         <div class="row align-items-center">
             <div class="col-auto">
                 <label for="serialNumber" class="col-form-label">Серийный номер:</label>
@@ -37,7 +42,24 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+
+    <div class="col-md-3">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <label for="pageSize" class="col-form-label">Записей на странице:</label>
+            </div>
+            <div class="col">
+                <select class="form-select" id="pageSize" name="pageSize">
+                    @foreach (var option in pageSizeOptions)
+                    {
+                        <option value="@option" selected="@(currentPageSize == option)">@option</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
         <button type="submit" class="btn btn-primary me-2">Найти</button>
     </div>
 </form>
@@ -48,7 +70,7 @@
         <thead>
             <tr>
                 <th>
-                    Номер кабинета
+                    № АС
                 </th>
                 <th>
                     Тип оборудования
@@ -102,7 +124,7 @@
                     {
                         <td>
                             <a asp-action="Edit" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Редактировать</a> |
-                            <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Удалить</a> |
+                            <a asp-controller="Equipment" asp-action="Delete" asp-route-equipmentId="@equipment.Id">Удалить</a> |
                             <a asp-controller="Equipment" asp-action="Duplicate" asp-route-equipmentId="@equipment.Id" asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId">Дублировать</a>
                         </td>
                     }
@@ -126,6 +148,7 @@ else
                    asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId"
                    asp-route-cabinetNumber="@Model.EquipmentFilterModel.CabinetNumber"
                    asp-route-serialNumber="@Model.EquipmentFilterModel.SerialNumber"
+                   asp-route-pageSize="@currentPageSize"
                    class="page-link" aria-label="Предыдущая">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
@@ -139,6 +162,7 @@ else
                        asp-route-facilityId="@Model.EquipmentFilterModel.FacilityId"
                        asp-route-cabinetNumber="@Model.EquipmentFilterModel.CabinetNumber"
                        asp-route-serialNumber="@Model.EquipmentFilterModel.SerialNumber"
+                       asp-route-pageSize="@currentPageSize"
                        aria-label="@pageNumber">
                         @pageNumber
                     </a>
@@ -151,6 +175,7 @@ else
                    asp-route-pageNumber="@(Model.PagedEquipments.PageNumber + 1)"
                    asp-route-cabinetNumber="@Model.EquipmentFilterModel.CabinetNumber"
                    asp-route-serialNumber="@Model.EquipmentFilterModel.SerialNumber"
+                   asp-route-pageSize="@currentPageSize"
                    aria-label="Следующая">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
@@ -174,7 +199,7 @@ else
                     <input type="text" class="form-control" id="SerialNumber" name="SerialNumber" required>
                 </div>
                 <div class="col-md-3">
-                    <label for="CabinetNumber" class="form-label">Номер кабинета *</label>
+                    <label for="CabinetNumber" class="form-label">№ АС *</label>
                     <input type="text" class="form-control" id="CabinetNumber" name="CabinetNumber" required>
                 </div>
                 <div class="col-md-3">
@@ -203,25 +228,6 @@ else
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-success">Добавить оборудование</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Форма нового типа оборудования -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">Добавить новый тип оборудования</h5>
-        </div>
-        <div class="card-body">
-            <form method="post" asp-action="Create" asp-controller="TypeEquipment" class="row g-3">
-                <input type="hidden" value="@Model.EquipmentFilterModel.FacilityId" class="form-control" id="facilityId" name="facilityId">
-                <div class="col-md-3">
-                    <label class="form-label">Наименование *</label>
-                    <input type="text" class="form-control" id="@nameof(TypeEquipment.Name)" name="@nameof(TypeEquipment.Name)" required>
-                </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-success">Добавить тип оборудования</button>
                 </div>
             </form>
         </div>

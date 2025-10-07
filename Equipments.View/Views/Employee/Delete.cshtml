@@ -23,7 +23,7 @@
                                     <tbody>
                                         <tr>
                                             <th class="w-25">Фамилия и инициалы:</th>
-                                            <td>@Model.SubdivisionName</td>
+                                            <td>@Model.SurnameAndInitials</td>
                                             <td>
                                                 <small class="text-muted d-block mt-1">
                                                     При удалении сотрудника оборудование останется в системе, но будет откреплено от этого сотрудника.
@@ -42,7 +42,7 @@
                         <div class="d-flex gap-2">
                             <button type="submit"
                                     class="btn btn-danger">
-                                <i class="bi bi-trash"></i> Удалить сотрудника
+                                <i class="bi bi-trash"></i> Удалить
                             </button>
                             <a asp-controller="Employee"
                                asp-action="Index"

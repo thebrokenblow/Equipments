@@ -17,11 +17,10 @@ public class EquipmentController(
     ITypeEquipmentService typeEquipmentService,
     IFacilityService facilityService) : Controller
 {
-    private const int pageSize = 15;
-
     [HttpGet]
     public async Task<IActionResult> Index(
         int facilityId,
+        int pageSize = 25,
         int pageNumber = 1,
         string? cabinetNumber = null,
         string? serialNumber = null)
@@ -55,7 +54,7 @@ public class EquipmentController(
             PagedEquipments = pagedEquipments,
             EquipmentFilterModel = equipmentFilterModel,
             EmployeesSelectList = employeesSelectList,
-            TypesEquipmentsSelectList = typesEquipmentsSelectList,
+            TypesEquipmentsSelectList = typesEquipmentsSelectList
         };
 
         return View(equipmentIndexViewModel);
@@ -65,14 +64,6 @@ public class EquipmentController(
     [AuthenticationRequired]
     public async Task<IActionResult> Create(int facilityId, Equipment equipment)
     {
-        if (!ModelState.IsValid)
-        {
-            return RedirectToAction(
-                    nameof(Index),
-                    NameController.GetControllerName(nameof(EquipmentController)),
-                    new { facilityId });
-        }
-
         await equipmentService.AddAsync(equipment);
 
         return RedirectToAction(
@@ -83,7 +74,7 @@ public class EquipmentController(
 
     [HttpGet]
     [AuthenticationRequired]
-    public async Task<IActionResult> Delete(int equipmentId, int facilityId)
+    public async Task<IActionResult> Delete(int equipmentId)
     {
         try
         {
@@ -98,15 +89,16 @@ public class EquipmentController(
 
     [HttpPost]
     [AuthenticationRequired]
-    public async Task<IActionResult> DeleteConfirmed(int equipmentId)
+    public async Task<IActionResult> DeleteConfirmed(int facilityId, int equipmentId)
     {
         try
         {
             await equipmentService.RemoveByIdAsync(equipmentId);
 
             return RedirectToAction(
-                    nameof(Index),
-                    NameController.GetControllerName(nameof(EmployeeController)));
+                        nameof(Index),
+                        NameController.GetControllerName(nameof(EquipmentController)),
+                        new { facilityId });
         }
         catch (NotFoundException)
         {

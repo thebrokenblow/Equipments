@@ -6,4 +6,6 @@ public interface ITypeEquipmentService
 {
     Task AddAsync(TypeEquipment typeEquipment);
     Task<List<TypeEquipment>> GetAllAsync();
+    Task<TypeEquipment> GetByIdAsync(int typeEquipmentId);
+    Task UpdateAsync(TypeEquipment typeEquipment);
 }

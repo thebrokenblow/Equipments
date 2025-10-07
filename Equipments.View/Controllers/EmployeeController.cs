@@ -8,10 +8,8 @@ namespace Equipments.View.Controllers;
 
 public class EmployeeController(IEmployeeService employeeService) : Controller
 {
-    private const int pageSize = 15;
-
     [HttpGet]
-    public async Task<IActionResult> Index(int pageNumber = 1)
+    public async Task<IActionResult> Index(int pageSize = 25, int pageNumber = 1)
     {
         var pagedEmployees = await employeeService.GetPagedAsync(pageNumber, pageSize);
 

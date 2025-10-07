@@ -8,9 +8,35 @@
 
     var statusInactiveButton = "disabled";
     var statusSelectedPage = "active";
+
+    var pageSizeOptions = new[] { 10, 25, 50, 100 };
+    var currentPageSize = Model.PageSize;
 }
 
 <h1>Сотрудники</h1>
+
+<!-- Форма поиска -->
+<form method="get" asp-action="Index" asp-controller="Employee" class="row g-3 mb-4 align-items-end mt-2">
+    <div class="col-md-3">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                <label for="pageSize" class="col-form-label">Записей на странице:</label>
+            </div>
+            <div class="col">
+                <select class="form-select" id="pageSize" name="pageSize">
+                    @foreach (var option in pageSizeOptions)
+                    {
+                        <option value="@option" selected="@(currentPageSize == option)">@option</option>
+                    }
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary me-2">Отобразить</button>
+    </div>
+</form>
 
 @if (Model.Items.Count > 0)
 {
@@ -63,8 +89,9 @@ else
     <nav>
         <ul class="pagination">
             <li class="page-item @(!Model.HasPreviousPage ? statusInactiveButton : string.Empty)">
-                <a asp-action="Index" asp-controller="Equipment"
+                <a asp-action="Index" asp-controller="Employee"
                    asp-route-pageNumber="@(Model.PageNumber - 1)"
+                   asp-route-pageSize="@currentPageSize"
                    class="page-link" aria-label="Предыдущая">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
@@ -75,6 +102,7 @@ else
                     <a class="page-link"
                        asp-action="Index"
                        asp-route-pageNumber="@pageNumber"
+                       asp-route-pageSize="@currentPageSize"
                        aria-label="@pageNumber">
                         @pageNumber
                     </a>
@@ -84,6 +112,7 @@ else
                 <a class="page-link"
                    asp-action="Index"
                    asp-route-pageNumber="@(Model.PageNumber + 1)"
+                   asp-route-pageSize="@currentPageSize"
                    aria-label="Следующая">
                     <span aria-hidden="true">&raquo;</span>
                 </a>

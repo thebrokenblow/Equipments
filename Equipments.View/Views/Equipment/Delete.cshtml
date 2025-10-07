@@ -26,7 +26,7 @@
                                             <td>@Model.SerialNumber</td>
                                         </tr>
                                         <tr>
-                                            <th>Номер кабинета:</th>
+                                            <th>№ АС:</th>
                                             <td>@Model.CabinetNumber</td>
                                         </tr>
                                         <tr>
@@ -77,11 +77,23 @@
                         </div>
                     </div>
 
-                    <form asp-action="DeleteConfirmed" method="post">
-                        <input type="hidden" asp-for="Id" name="equipmentId" />
+                    <form asp-action="DeleteConfirmed"
+                          method="post">
+
+                        <input type="hidden"
+                               asp-for="Id"
+                               value="@Model.FacilityId"
+                               name="facilityId" />
+
+                        <input type="hidden"
+                               asp-for="FacilityId"
+                               value="@Model.Id"
+                               name="equipmentId" />
+
                         <div class="col-12">
                             <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-danger">
+                                <button type="submit"
+                                        class="btn btn-danger">
                                     <i class="bi bi-check-lg"></i> Удалить
                                 </button>
                                 <a asp-controller="Equipment"

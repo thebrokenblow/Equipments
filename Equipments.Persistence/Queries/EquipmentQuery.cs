@@ -13,7 +13,8 @@ public class EquipmentQuery(EquipmentsDbContext context) : IEquipmentQueries
         EquipmentFilterModel equipmentFilterModel)
     {
         var equipmentsQuery = context.Equipments
-                                        .Where(equipment => equipment.FacilityId == equipmentFilterModel.FacilityId);
+                                        .Where(equipment => equipment.FacilityId == equipmentFilterModel.FacilityId)
+                                        .AsNoTracking();
 
         if (!string.IsNullOrEmpty(equipmentFilterModel.CabinetNumber))
         {
@@ -25,9 +26,14 @@ public class EquipmentQuery(EquipmentsDbContext context) : IEquipmentQueries
             equipmentsQuery = equipmentsQuery.Where(e => e.SerialNumber.Contains(equipmentFilterModel.SerialNumber));
         }
 
+        var rangeEquipmentsQuery = equipmentsQuery
+                                        .OrderBy(equipment => equipment.CabinetNumber)
+                                        .ThenBy(equipment => equipment.TypeEquipment!.Name)
+                                        .Skip(countSkip)
+                                        .Take(countTake);
+
         var count = await equipmentsQuery.CountAsync();
-        var equipments = await equipmentsQuery
-                                    .OrderBy(equipment => equipment.SerialNumber)
+        var equipments = await rangeEquipmentsQuery
                                     .Select(equipment => new EquipmentDetailsListModel
                                     {
                                         Id = equipment.Id,
@@ -39,9 +45,6 @@ public class EquipmentQuery(EquipmentsDbContext context) : IEquipmentQueries
                                         ConclusionSpecResearch = equipment.ConclusionSpecResearch,
                                         Note = equipment.Note,
                                     })
-                                    .Skip(countSkip)
-                                    .Take(countTake)
-                                    .AsNoTracking()
                                     .ToListAsync();
 
         return (equipments, count);

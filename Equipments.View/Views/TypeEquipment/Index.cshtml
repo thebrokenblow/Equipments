@@ -1,0 +1,68 @@
+﻿@using Equipments.Application.Common
+@using Equipments.Domain.Entities
+@using Equipments.Domain.QueryModels.Employees
+
+@model List<TypeEquipment>
+
+@{
+    ViewData["Title"] = "Типы оборудования";
+}
+
+<h1>Типы оборудования</h1>
+
+@if (Model.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Наименование
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var typeEquipment in Model)
+            {
+                <tr>
+                    <td>
+                        @typeEquipment.Name
+                    </td>
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        <td>
+                            <a asp-controller="TypeEquipment" asp-action="Edit" asp-route-typeEquipmentId="@typeEquipment.Id">Редактировать</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h2>По вашему запросу ничего не найдено</h2>
+}
+
+@if (User.Identity!.IsAuthenticated)
+{
+    <!-- Форма нового типа оборудования -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Добавить новый тип оборудования</h5>
+        </div>
+        <div class="card-body">
+            <form method="post"
+                  asp-action="Create"
+                  asp-controller="TypeEquipment"
+                  class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Наименование *</label>
+                    <input type="text" class="form-control" id="@nameof(TypeEquipment.Name)" name="@nameof(TypeEquipment.Name)" required>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-success">Добавить тип оборудования</button>
+                </div>
+            </form>
+        </div>
+    </div>
+}

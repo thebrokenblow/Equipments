@@ -5,11 +5,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Equipments.Persistence.Queries;
 
+/// <summary>
+/// Реализация запросов для работы с данными оборудования
+/// </summary>
 public class EquipmentQuery(EquipmentsDbContext context) : IEquipmentQueries
 {
+    /// <summary>
+    /// Получает отфильтрованный диапазон оборудования с количеством
+    /// </summary>
+    /// <param name="countSkip">Количество пропускаемых записей</param>
+    /// <param name="countTake">Количество получаемых записей</param>
+    /// <param name="equipmentFilterModel">Модель фильтра для поиска оборудования</param>
+    /// <returns>Задача, результатом которой является кортеж содержащий список оборудования и количество с учетом фильтра</returns>
     public async Task<(List<EquipmentDetailsListModel> Equipments, int CountEquipmentsWithFilter)> GetFilteredRangeAsync(
-        int countSkip, 
-        int countTake, 
+        int countSkip,
+        int countTake,
         EquipmentFilterModel equipmentFilterModel)
     {
         var equipmentsQuery = context.Equipments
@@ -50,6 +60,11 @@ public class EquipmentQuery(EquipmentsDbContext context) : IEquipmentQueries
         return (equipments, count);
     }
 
+    /// <summary>
+    /// Получает детальную информацию об оборудовании по идентификатору
+    /// </summary>
+    /// <param name="id">Идентификатор оборудования</param>
+    /// <returns>Задача, результатом которой является детальная модель оборудования или null если не найдено</returns>
     public async Task<EquipmentDetailsModel?> GetDetailsByIdAsync(int id)
     {
         var equipment = await context.Equipments

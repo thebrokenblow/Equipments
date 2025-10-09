@@ -4,8 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equipments.Persistence.Data.EntityTypeConfigurations;
 
+/// <summary>
+/// Конфигурация сущности Equipment для базы данных
+/// </summary>
 public class EquipmentConfiguration : IEntityTypeConfiguration<Equipment>
 {
+    /// <summary>
+    /// Настраивает сущность Equipment для Entity Framework
+    /// </summary>
+    /// <param name="builder">Построитель для конфигурации сущности</param>
     public void Configure(EntityTypeBuilder<Equipment> builder)
     {
         builder

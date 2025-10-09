@@ -171,7 +171,7 @@ public class EquipmentController(
     {
         try
         {
-            await equipmentService.DuplicateAsync(equipmentId);
+            await equipmentService.CreateDuplicateAsync(equipmentId);
 
             return RedirectToAction(
                         nameof(Index),

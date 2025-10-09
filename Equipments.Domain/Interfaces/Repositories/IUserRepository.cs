@@ -2,11 +2,16 @@
 
 namespace Equipments.Domain.Interfaces.Repositories;
 
+/// <summary>
+/// Предоставляет методы для работы с данными пользователей в хранилище.
+/// </summary>
 public interface IUserRepository
 {
-    Task<User?> GetByIdAsync(int id);
-    Task<User?> GetByPasswordAsync(string login);
-    Task AddAsync(User user);
-    Task UpdateAsync(User user);
-    Task<List<User>> GetAllAsync();
+
+    /// <summary>
+    /// Получает пользователя по паролю.
+    /// </summary>
+    /// <param name="password">Пароль пользователя.</param>
+    /// <returns>Задача, результатом которой является сущность пользователя или null если не найден.</returns>
+    Task<User?> GetByPasswordAsync(string password);
 }

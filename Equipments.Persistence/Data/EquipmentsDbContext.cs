@@ -33,8 +33,15 @@ public class EquipmentsDbContext(DbContextOptions<EquipmentsDbContext> options) 
     /// </summary>
     public DbSet<Facility> Facilities { get; set; }
 
+    /// <summary>
+    /// Набор данных пользователей системы
+    /// </summary>
     public DbSet<User> Users { get; set; }
 
+    /// <summary>
+    /// Настраивает модель базы данных при создании
+    /// </summary>
+    /// <param name="modelBuilder">Построитель модели базы данных</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

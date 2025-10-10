@@ -10,6 +10,7 @@ namespace Equipments.View.Controllers;
 public class TypeEquipmentController(ITypeEquipmentService typeEquipmentService) : Controller
 {
     [HttpGet]
+    [AuthenticationRequired]
     public async Task<IActionResult> Index()
     {
         var typesEquipments = await typeEquipmentService.GetAllAsync();

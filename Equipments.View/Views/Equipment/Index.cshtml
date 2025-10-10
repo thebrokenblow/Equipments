@@ -13,6 +13,24 @@
     var currentPageSize = Model.PagedEquipments.PageSize;
 }
 
+<style>
+    .table {
+        font-size: 15px;
+        border-collapse: collapse;
+    }
+
+    .table tbody tr {
+        line-height: 1.2;
+        margin: 0;
+        padding: 0;
+    }
+
+    .table td, .table th {
+        padding: 2px 4px;
+        margin: 0;
+     }
+</style>
+
 <h1>Оборудование</h1>
 
 <!-- Форма поиска -->
@@ -90,9 +108,12 @@
                 <th>
                     Примечание
                 </th>
-                <th>
-                    Действия
-                </th>
+                @if (User.Identity!.IsAuthenticated)
+                {
+                    <th>
+                        Действия
+                    </th>
+                }
             </tr>
         </thead>
         <tbody>

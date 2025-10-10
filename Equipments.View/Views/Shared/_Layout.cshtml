@@ -21,9 +21,12 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Employee" asp-action="Index">Сотрудники</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="TypeEquipment" asp-action="Index">Типы оборудования</a>
-                        </li>
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="TypeEquipment" asp-action="Index">Типы оборудования</a>
+                            </li>
+                        }
                     </ul>
                     <ul class="navbar-nav">
                         @if (User.Identity!.IsAuthenticated)

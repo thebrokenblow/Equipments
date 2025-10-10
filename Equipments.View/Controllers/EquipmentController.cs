@@ -20,7 +20,7 @@ public class EquipmentController(
     [HttpGet]
     public async Task<IActionResult> Index(
         int facilityId,
-        int pageSize = 25,
+        int pageSize = 50,
         int pageNumber = 1,
         string? cabinetNumber = null,
         string? serialNumber = null)

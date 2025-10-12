@@ -40,4 +40,11 @@ public interface IFacilityRepository
     /// <param name="facility">Сущность объекта для удаления.</param>
     /// <returns>Задача, представляющая асинхронную операцию.</returns>
     Task RemoveAsync(Facility facility);
+
+    /// <summary>
+    /// Асинхронно проверяет существование объекта с указанным идентификатором в хранилище.
+    /// </summary>
+    /// <param name="id">Идентификатор объекта для проверки.</param>
+    /// <returns>Задача, результатом которой является true, если объект существует, иначе - false.</returns>
+    Task<bool> IsExistAsync(int id);
 }

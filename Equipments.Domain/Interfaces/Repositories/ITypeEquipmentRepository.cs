@@ -33,4 +33,11 @@ public interface ITypeEquipmentRepository
     /// <param name="typeEquipment">Обновленные данные типа оборудования.</param>
     /// <returns>Задача, представляющая асинхронную операцию.</returns>
     Task UpdateAsync(TypeEquipment typeEquipment);
+
+    /// <summary>
+    /// Асинхронно проверяет существование типа оборудования с указанным идентификатором в хранилище.
+    /// </summary>
+    /// <param name="id">Идентификатор типа оборудования для проверки.</param>
+    /// <returns>Задача, результатом которой является true, если тип оборудования существует, иначе - false.</returns>
+    Task<bool> IsExistAsync(int id);
 }

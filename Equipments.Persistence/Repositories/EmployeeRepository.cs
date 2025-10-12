@@ -53,4 +53,16 @@ public class EmployeeRepository(EquipmentsDbContext context) : IEmployeeReposito
         context.Update(employee);
         await context.SaveChangesAsync();
     }
+
+    /// <summary>
+    /// Асинхронно проверяет существование сотрудника с указанным идентификатором в хранилище
+    /// </summary>
+    /// <param name="id">Идентификатор сотрудника для проверки</param>
+    /// <returns>Задача, результатом которой является true, если сотрудник существует, иначе - false</returns>
+    public async Task<bool> IsExistAsync(int id)
+    {
+        var isExist = await context.Employees.AnyAsync(employee => employee.Id == id);
+
+        return isExist;
+    }
 }

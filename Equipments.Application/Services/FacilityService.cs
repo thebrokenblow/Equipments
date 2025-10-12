@@ -72,6 +72,15 @@ public class FacilityService(IFacilityRepository facilityRepository) : IFacility
     /// <exception cref="NotFoundException">Выбрасывается, если объект не найден</exception>
     public async Task UpdateAsync(Facility facility)
     {
+        var isExist = await facilityRepository.IsExistAsync(facility.Id);
+
+        if (!isExist)
+        {
+            throw new NotFoundException(nameof(Facility), facility.Id);
+        }
+
+        facility.Name = facility.Name.Trim();
+
         await facilityRepository.UpdateAsync(facility);
     }
 }

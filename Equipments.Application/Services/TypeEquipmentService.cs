@@ -61,7 +61,15 @@ public class TypeEquipmentService(ITypeEquipmentRepository typeEquipmentReposito
     /// <exception cref="NotFoundException">Выбрасывается, если тип оборудования не найден</exception>
     public async Task UpdateAsync(TypeEquipment typeEquipment)
     {
+        var isExist = await typeEquipmentRepository.IsExistAsync(typeEquipment.Id);
+
+        if (!isExist)
+        {
+            throw new NotFoundException(nameof(TypeEquipment), typeEquipment.Id);
+        }
+
         typeEquipment.Name = typeEquipment.Name.Trim();
+
         await typeEquipmentRepository.UpdateAsync(typeEquipment);
     }
 }

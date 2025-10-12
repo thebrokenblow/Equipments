@@ -34,4 +34,11 @@ public interface IEmployeeRepository
     /// <param name="employee">Обновленные данные сотрудника.</param>
     /// <returns>Задача, представляющая асинхронную операцию.</returns>
     Task UpdateAsync(Employee employee);
+
+    /// <summary>
+    /// Асинхронно проверяет существование сотрудника с указанным идентификатором в хранилище.
+    /// </summary>
+    /// <param name="id">Идентификатор сотрудника для проверки.</param>
+    /// <returns>Задача, результатом которой является true, если сотрудник существует, иначе - false.</returns>
+    Task<bool> IsExistAsync(int id);
 }

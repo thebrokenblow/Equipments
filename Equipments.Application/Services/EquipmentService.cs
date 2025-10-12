@@ -62,6 +62,13 @@ public class EquipmentService(
     /// <exception cref="NotFoundException">Выбрасывается, если оборудование не найдено</exception>
     public async Task UpdateAsync(Equipment equipment)
     {
+        var isExist = await equipmentRepository.IsExistAsync(equipment.Id);
+
+        if (!isExist)
+        {
+            throw new NotFoundException(nameof(Equipment), equipment.Id);
+        }
+
         equipment.SerialNumber = equipment.SerialNumber.Trim();
         equipment.CabinetNumber = equipment.CabinetNumber.Trim();
         equipment.ConclusionSpecResearch = equipment.ConclusionSpecResearch?.Trim();

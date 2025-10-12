@@ -8,7 +8,7 @@ namespace Equipments.Persistence.Repositories;
 /// <summary>
 /// Реализация репозитория для работы с данными типов оборудования
 /// </summary>
-public class TypeEquipmentRepository(EquipmentsDbContext equipmentsDbContext) : ITypeEquipmentRepository
+public class TypeEquipmentRepository(EquipmentsDbContext context) : ITypeEquipmentRepository
 {
     /// <summary>
     /// Получает список всех типов оборудования
@@ -16,10 +16,10 @@ public class TypeEquipmentRepository(EquipmentsDbContext equipmentsDbContext) : 
     /// <returns>Задача, результатом которой является список всех типов оборудования</returns>
     public async Task<List<TypeEquipment>> GetAllAsync()
     {
-        var typesEquipments = await equipmentsDbContext.TypeEquipments
-                                                            .OrderBy(typeEquipment => typeEquipment.Name)
-                                                            .AsNoTracking()
-                                                            .ToListAsync();
+        var typesEquipments = await context.TypeEquipments
+                                                .OrderBy(typeEquipment => typeEquipment.Name)
+                                                .AsNoTracking()
+                                                .ToListAsync();
         return typesEquipments;
     }
 
@@ -30,9 +30,9 @@ public class TypeEquipmentRepository(EquipmentsDbContext equipmentsDbContext) : 
     /// <returns>Задача, результатом которой является сущность типа оборудования или null если не найден</returns>
     public Task<TypeEquipment?> GetByIdAsync(int id)
     {
-        var typeEquipment = equipmentsDbContext.TypeEquipments
-                                                    .AsNoTracking()
-                                                    .FirstOrDefaultAsync(typeEquipment => typeEquipment.Id == id);
+        var typeEquipment = context.TypeEquipments
+                                             .AsNoTracking()
+                                             .FirstOrDefaultAsync(typeEquipment => typeEquipment.Id == id);
         return typeEquipment;
     }
 
@@ -43,8 +43,8 @@ public class TypeEquipmentRepository(EquipmentsDbContext equipmentsDbContext) : 
     /// <returns>Задача, представляющая асинхронную операцию</returns>
     public async Task AddAsync(TypeEquipment typeEquipment)
     {
-        await equipmentsDbContext.AddAsync(typeEquipment);
-        await equipmentsDbContext.SaveChangesAsync();
+        await context.AddAsync(typeEquipment);
+        await context.SaveChangesAsync();
     }
 
     /// <summary>
@@ -54,7 +54,19 @@ public class TypeEquipmentRepository(EquipmentsDbContext equipmentsDbContext) : 
     /// <returns>Задача, представляющая асинхронную операцию</returns>
     public async Task UpdateAsync(TypeEquipment typeEquipment)
     {
-        equipmentsDbContext.Update(typeEquipment);
-        await equipmentsDbContext.SaveChangesAsync();
+        context.Update(typeEquipment);
+        await context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Асинхронно проверяет существование типа оборудования с указанным идентификатором в хранилище
+    /// </summary>
+    /// <param name="id">Идентификатор типа оборудования для проверки</param>
+    /// <returns>Задача, результатом которой является true, если тип оборудования существует, иначе - false</returns>
+    public async Task<bool> IsExistAsync(int id)
+    {
+        var isExist = await context.TypeEquipments.AnyAsync(typeEquipment => typeEquipment.Id == id);
+
+        return isExist;
     }
 }

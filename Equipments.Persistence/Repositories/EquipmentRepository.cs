@@ -53,4 +53,16 @@ public class EquipmentRepository(EquipmentsDbContext context) : IEquipmentReposi
         context.Remove(equipment);
         await context.SaveChangesAsync();
     }
+
+    /// <summary>
+    /// Асинхронно проверяет существование оборудования с указанным идентификатором в хранилище
+    /// </summary>
+    /// <param name="id">Идентификатор оборудования для проверки</param>
+    /// <returns>Задача, результатом которой является true, если оборудование существует, иначе - false</returns>
+    public async Task<bool> IsExistAsync(int id)
+    {
+        var isExist = await context.Equipments.AnyAsync(equipment => equipment.Id == id);
+
+        return isExist;
+    }
 }

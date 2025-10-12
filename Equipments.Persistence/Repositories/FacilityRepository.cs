@@ -63,4 +63,16 @@ public class FacilityRepository(EquipmentsDbContext context) : IFacilityReposito
         context.Remove(facility);
         await context.SaveChangesAsync();
     }
+
+    /// <summary>
+    /// Асинхронно проверяет существование объекта с указанным идентификатором в хранилище
+    /// </summary>
+    /// <param name="id">Идентификатор объекта для проверки</param>
+    /// <returns>Задача, результатом которой является true, если объект существует, иначе - false</returns>
+    public async Task<bool> IsExistAsync(int id)
+    {
+        var isExist = await context.Facilities.AnyAsync(facility => facility.Id == id);
+
+        return isExist;
+    }
 }

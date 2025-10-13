@@ -22,7 +22,7 @@ public interface IEquipmentRepository
     Task AddAsync(Equipment equipment);
 
     /// <summary>
-    /// Удаляет оборудование из хранилище.
+    /// Удаляет оборудование из хранилища.
     /// </summary>
     /// <param name="equipment">Сущность оборудования для удаления.</param>
     /// <returns>Задача, представляющая асинхронную операцию.</returns>
@@ -34,11 +34,4 @@ public interface IEquipmentRepository
     /// <param name="equipment">Обновленные данные оборудования.</param>
     /// <returns>Задача, представляющая асинхронную операцию.</returns>
     Task UpdateAsync(Equipment equipment);
-
-    /// <summary>
-    /// Асинхронно проверяет существование оборудования с указанным идентификатором в хранилище.
-    /// </summary>
-    /// <param name="id">Идентификатор оборудования для проверки.</param>
-    /// <returns>Задача, результатом которой является true, если оборудование существует, иначе - false.</returns>
-    Task<bool> IsExistAsync(int id);
 }

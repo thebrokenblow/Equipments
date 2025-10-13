@@ -86,7 +86,7 @@ public class EmployeeService(
     public async Task<Employee> GetByIdAsync(int id)
     {
         var employee = await employeeRepository.GetByIdAsync(id) ??
-                                        throw new NotFoundException(nameof(Employee), id);
+                            throw new NotFoundException(nameof(Employee), id);
 
         return employee;
     }
@@ -97,17 +97,6 @@ public class EmployeeService(
     /// <param name="employee">Обновленные данные сотрудника</param>
     public async Task UpdateAsync(Employee employee)
     {
-        var isExist = await employeeRepository.IsExistAsync(employee.Id);
-
-        if (!isExist)
-        {
-            throw new NotFoundException(nameof(Equipment), employee.Id);
-        }
-
-        employee.SurnameAndInitials = employee.SurnameAndInitials.Trim();
-        employee.SubdivisionName = employee.SubdivisionName?.Trim();
-        employee.Note = employee.Note?.Trim();
-
         await employeeRepository.UpdateAsync(employee);
     }
 }
